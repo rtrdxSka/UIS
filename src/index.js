@@ -54,12 +54,24 @@ app.post('/api/User/discord-info', (req, res) => {
   const guild = client.guilds.cache.get(process.env.GUILD_ID);
   const role = guild.roles.cache.get("1180542074488102972");
   const member = guild.members.cache.get(discordID);
-  // if (facultyNumber == "1"){
-  
-  //   member.roles.add(role);
 
-    
-  // }
+  guild.members.fetch(discordID)
+  .then(member => {
+    // Check if the member is found
+    if (member) {
+      // Change the username (nickname) of the member
+      member.setNickname(username)
+        .then(() => {
+          console.log(`Changed username to ${username} for user ${member.user.tag}`);
+        })
+        .catch(error => {
+          console.error(`Error changing username: ${error}`);
+        });
+      }
+    });
+
+
+
   if (facultyNumber === "1") {
     // Fetch the member asynchronously
     guild.members.fetch(discordID)
