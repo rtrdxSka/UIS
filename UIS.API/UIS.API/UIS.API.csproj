@@ -14,4 +14,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\UIS.Services\UIS.Services.csproj" />
+  </ItemGroup>
+
 </Project>
