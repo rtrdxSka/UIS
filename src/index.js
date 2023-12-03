@@ -1,7 +1,16 @@
 require('dotenv').config();
 const express = require("express");
 const axios = require("axios");
+const mysql = require('mysql2');
 const { Client, IntentsBitField, GuildMember } = require('discord.js');
+
+  // Create a connection
+  const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'Admin123!',
+    database: 'botuserinfo'
+  });
 
 const client = new Client({
   intents: [
@@ -21,8 +30,34 @@ client.on('interactionCreate', async (interaction) => {
 
   if (interaction.commandName === 'auth') {
   interaction.user.send(`http://localhost/local/oauth/login.php?client_id=ClientId1&response_type=code&discord_id=${interaction.user.id}`);
+
+      // Connect to the database
+connection.connect((err) => {
+  if (err) {
+    console.error('Error connecting to MySQL:', err);
+    return;
+  }
+  console.log('Connected to MySQL database');
+});
+
+// Perform database operations here...
+
+// Close the connection when done
+connection.end((err) => {
+  if (err) {
+    console.error('Error closing MySQL connection:', err);
+    return;
+  }
+  console.log('MySQL connection closed');
+});
+
+
+
+
+
   return 0;
   }
+
 });
 
 
