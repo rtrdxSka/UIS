@@ -3,6 +3,8 @@ const express = require("express");
 const axios = require("axios");
 const mysql = require('mysql2');
 const { Client, IntentsBitField, GuildMember } = require('discord.js');
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v10');
 
   // Create a connection
   const connection = mysql.createConnection({
@@ -20,6 +22,30 @@ const client = new Client({
     IntentsBitField.Flags.MessageContent,
   ],
 });
+
+const commands = [
+  {
+    name: 'auth',
+    description: 'Gives user an auth link to moodle',
+  },
+];
+
+const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
+
+const registerCommands = async (guildId) => {
+  try {
+    console.log(`Registering commands for guild: ${guildId}`);
+    await rest.put(
+      Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId),
+      { body: commands },
+    );
+    console.log('Commands registered successfully.');
+  } catch (error) {
+    console.error(`Error registering commands for guild ${guildId}:`, error);
+  }
+};
+
+
 
 client.on('ready', (c) => {
   console.log(`✅ ${c.user.tag} is online.`);
@@ -58,6 +84,11 @@ connection.end((err) => {
   return 0;
   }
 
+});
+
+client.on('guildCreate', (guild) => {
+  // When the bot joins a new server, register commands for that server
+  registerCommands(guild.id);
 });
 
 
