@@ -3,7 +3,6 @@ const express = require("express");
 const axios = require("axios");
 const { Client, IntentsBitField, GuildMember } = require('discord.js');
 
-
 const client = new Client({
   intents: [
     IntentsBitField.Flags.Guilds,
@@ -30,30 +29,31 @@ client.on('interactionCreate', async (interaction) => {
 client.login(process.env.TOKEN);
 
 
-const app = express();
-const PORT = 4200;
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Middleware to log when the endpoint is hit
-app.use('/api/User/discord-info', (req, res, next) => {
-  console.log('Received something at /api/User/discord-info');
-  next(); // Pass control to the next middleware
+function setRole(role,discordID,member){
+// Fetch the member asynchronously
+guild.members.fetch(discordID)
+.then(member => {
+  // Check if the member is found
+  if (member) {
+    // Add the role to the member
+    member.roles.add(role)
+      .then(() => {
+        console.log(`Added role ${role.name} to user ${member.user.tag}`);
+      })
+      .catch(error => {
+        console.error(`Error adding role: ${error}`);
+      });
+  } else {
+    console.error(`Member not found with ID: ${discordID}`);
+  }
+})
+.catch(error => {
+  console.error(`Error fetching member: ${error}`);
 });
 
-// Your route handling
-app.post('/api/User/discord-info', (req, res) => {
+}
 
-
-  const firstName = req.body.firstname;
-  const lastName = req.body.lastname;
-  const facultyNumber = req.body.faculty_number;
-  const discordID = req.body.discord_id;
-  const username = `${firstName} ${lastName}`;
-  const guild = client.guilds.cache.get(process.env.GUILD_ID);
-  const role = guild.roles.cache.get("1180542074488102972");
-  const member = guild.members.cache.get(discordID);
+function setName(discordID,username){
 
   guild.members.fetch(discordID)
   .then(member => {
@@ -70,29 +70,56 @@ app.post('/api/User/discord-info', (req, res) => {
       }
     });
 
+}
+
+
+const app = express();
+const PORT = 4200;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Middleware to log when the endpoint is hit
+app.use('/api/User/discord-info', (req, res, next) => {
+  console.log('Received something at /api/User/discord-info');
+  next(); // Pass control to the next middleware
+});
+const guild = client.guilds.cache.get(process.env.GUILD_ID);
+
+// Your route handling
+app.post('/api/User/discord-info', (req, res) => {
+
+const roleFirstCourse = guild.roles.cache.find((n=> n.name === "First Course"))
+const roleSecondCourse = guild.roles.cache.find((n=> n.name === "Second Course"))
+const roleThirdCourse = guild.roles.cache.find((n=> n.name === "Third Course"))
+const roleFourthCourse = guild.roles.cache.find((n=> n.name === "Fourth Course"))
+
+  const firstName = req.body.firstname;
+  const lastName = req.body.lastname;
+  const facultyNumber = req.body.faculty_number;
+  const discordID = req.body.discord_id;
+  const username = `${firstName} ${lastName}`;
+  const member = guild.members.cache.get(discordID);
+
+  setName(discordID,username);
 
 
   if (facultyNumber === "1") {
-    // Fetch the member asynchronously
-    guild.members.fetch(discordID)
-      .then(member => {
-        // Check if the member is found
-        if (member) {
-          // Add the role to the member
-          member.roles.add(role)
-            .then(() => {
-              console.log(`Added role ${role.name} to user ${member.user.tag}`);
-            })
-            .catch(error => {
-              console.error(`Error adding role: ${error}`);
-            });
-        } else {
-          console.error(`Member not found with ID: ${discordID}`);
-        }
-      })
-      .catch(error => {
-        console.error(`Error fetching member: ${error}`);
-      });
+ 
+    setRole(roleFirstCourse,discordID,member);
+
+  } else if (facultyNumber === "2"){
+
+    setRole(roleSecondCourse,discordID,member);
+
+  } else if (facultyNumber === "3"){
+
+    setRole(roleThirdCourse,discordID,member);
+
+  } else if (facultyNumber === "4"){
+
+    setRole(roleFourthCourse,discordID,member);
+
   }
 
   console.log('Received form data:', { firstName, lastName, facultyNumber});
