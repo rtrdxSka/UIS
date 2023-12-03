@@ -1,4 +1,5 @@
 ﻿using UIS.DAL.Constants;
+using UIS.DAL.DTO;
 
 namespace UIS.Services.Auth
 {
@@ -20,6 +21,20 @@ namespace UIS.Services.Auth
             var response = await client.PostAsync(MoodleAuthConstants.TokenUrl, content);
 
             return response;
+        }
+
+        public async Task<HttpResponseMessage> GetUserInfoAsync(HttpClient client, MoodleTokenDTO moodleToken)
+        {
+            // Creates the POST request body for getting the user info from moodle
+            var access_token = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("access_token", moodleToken.AccessToken)
+            });
+
+            // Sends the POST request to the Moodle user info endpoint
+            var userInfo = await client.PostAsync(MoodleAuthConstants.UserInfoUrl, access_token);
+
+            return userInfo;
         }
     }
 }
