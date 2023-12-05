@@ -6,13 +6,7 @@ const { Client, IntentsBitField, GuildMember } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v10');
 
-  // Create a connection
-  const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Admin123!',
-    database: 'botuserinfo'
-  });
+
 
 const client = new Client({
   intents: [
@@ -31,6 +25,97 @@ const commands = [
 ];
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
+
+
+// function getGuildID(tableName,discordID){
+//         // Create a connection
+//         const connection = mysql.createConnection({
+//           host: 'localhost',
+//           user: 'root',
+//           password: 'Admin123!',
+//           database: 'botuserinfo'
+//         });
+
+//         const query = `SELECT guild_id FROM ${tableName} WHERE discord_id= ${discordID}`;
+
+//         connection.query(query)
+// }
+
+// function userExists(tableName, data, callback) {
+
+//     // Create a connection
+//     const connection = mysql.createConnection({
+//       host: 'localhost',
+//       user: 'root',
+//       password: 'Admin123!',
+//       database: 'botuserinfo'
+//     });
+
+//   const { discord_id, guild_id } = data;
+//   const query = `SELECT * FROM ${tableName} WHERE discord_id = ? AND guild_id = ?`;
+
+//   connection.query(query, [discord_id, guild_id], (err, results) => {
+//     if (err) {
+//       console.error('Error checking user existence:', err);
+//       return callback(err, null);
+//     }
+
+//     const userExists = results.length > 0;
+//     callback(null, userExists);
+//   });
+// }
+
+// function insertData(tableName, data) {
+
+//       // Create a connection
+//       const connection = mysql.createConnection({
+//         host: 'localhost',
+//         user: 'root',
+//         password: 'Admin123!',
+//         database: 'botuserinfo'
+//       });
+
+//   userExists(tableName, data, (err, exists) => {
+//     if (err) {
+//       console.error('Error checking user existence:', err);
+//       return;
+//     }
+
+//     if (exists) {
+//       console.log('User already exists. Skipping insertion.');
+//       connection.end();
+//     } else {
+//       connection.connect((err) => {
+//         if (err) {
+//           console.error('Error connecting to MySQL:', err);
+//           return;
+//         }
+//         console.log('Connected to MySQL database');
+
+//         // SQL query to insert data into the specified table
+//         const insertQuery = `INSERT INTO ${tableName} SET ?`;
+
+//         // Execute the query with the data
+//         connection.query(insertQuery, data, (err, results) => {
+//           if (err) {
+//             console.error('Error inserting data:', err);
+//           } else {
+//             console.log('Data inserted successfully. Inserted ID:', results.insertId);
+//           }
+
+//           // Close the connection when done
+//           connection.end((err) => {
+//             if (err) {
+//               console.error('Error closing MySQL connection:', err);
+//             } else {
+//               console.log('MySQL connection closed');
+//             }
+//           });
+//         });
+//       });
+//     }
+//   });
+// }
 
 const registerCommands = async (guildId) => {
   try {
@@ -55,29 +140,17 @@ client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === 'auth') {
-  interaction.user.send(`http://localhost/local/oauth/login.php?client_id=ClientId1&response_type=code&discord_id=${interaction.user.id}`);
-
-      // Connect to the database
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-    return;
-  }
-  console.log('Connected to MySQL database');
-});
-
-// Perform database operations here...
-
-// Close the connection when done
-connection.end((err) => {
-  if (err) {
-    console.error('Error closing MySQL connection:', err);
-    return;
-  }
-  console.log('MySQL connection closed');
-});
+  interaction.user.send(`http://localhost/local/oauth/login.php?client_id=ClientId1&response_type=code&discord_id=${interaction.user.id}&guild_id=${interaction.guild.id}`);
 
 
+//     // Example data
+// const studentData = {
+//   discord_id: interaction.user.id,
+//   guild_id: interaction.guild.id
+//   // Add other fields as needed
+// };
+
+//   insertData("user_data",studentData);
 
 
 
@@ -95,7 +168,7 @@ client.on('guildCreate', (guild) => {
 client.login(process.env.TOKEN);
 
 
-function setRole(role,discordID,member){
+function setRole(role,discordID,member,guild){
 // Fetch the member asynchronously
 guild.members.fetch(discordID)
 .then(member => {
@@ -119,7 +192,7 @@ guild.members.fetch(discordID)
 
 }
 
-function setName(discordID,username){
+function setName(discordID,username,guild){
 
   guild.members.fetch(discordID)
   .then(member => {
@@ -150,48 +223,86 @@ app.use('/api/User/discord-info', (req, res, next) => {
   console.log('Received something at /api/User/discord-info');
   next(); // Pass control to the next middleware
 });
-const guild = client.guilds.cache.get(process.env.GUILD_ID);
+// const guild = client.guilds.cache.get(process.env.GUILD_ID);
+
+async function getGuildById(guildID,client) {
+  try {
+      const guild = await client.guilds.fetch(guildID);
+      return guild;
+  } catch (error) {
+      console.error(`Error fetching guild: ${error.message}`);
+      return null;
+  }
+}
 
 // Your route handling
 app.post('/api/User/discord-info', (req, res) => {
 
-const roleFirstCourse = guild.roles.cache.find((n=> n.name === "First Course"))
-const roleSecondCourse = guild.roles.cache.find((n=> n.name === "Second Course"))
-const roleThirdCourse = guild.roles.cache.find((n=> n.name === "Third Course"))
-const roleFourthCourse = guild.roles.cache.find((n=> n.name === "Fourth Course"))
 
   const firstName = req.body.firstname;
   const lastName = req.body.lastname;
   const facultyNumber = req.body.faculty_number;
   const discordID = req.body.discord_id;
-  const username = `${firstName} ${lastName}`;
-  const member = guild.members.cache.get(discordID);
 
-  setName(discordID,username);
+   // Use .then to handle the asynchronous operation
+   getGuildById(req.body.guild_id, client)
+   .then(myguild => {
+     // Continue with the rest of your code using myguild
+     if (myguild) {
+       res.status(200).json({ success: true });
 
 
-  if (facultyNumber === "1") {
- 
-    setRole(roleFirstCourse,discordID,member);
+       const username = `${firstName} ${lastName}`;
+       const roleFirstCourse = myguild.roles.cache.find((n=> n.name === "First Course"))
+       const roleSecondCourse = myguild.roles.cache.find((n=> n.name === "Second Course"))
+       const roleThirdCourse = myguild.roles.cache.find((n=> n.name === "Third Course"))
+       const roleFourthCourse = myguild.roles.cache.find((n=> n.name === "Fourth Course"))
+     
+     
+     
+     
+       const member = myguild.members.cache.get(discordID);
+     
+       setName(discordID,username,myguild);
+     
+     
+       if (facultyNumber === "1") {
+      
+         setRole(roleFirstCourse,discordID,member,myguild);
+     
+       } else if (facultyNumber === "2"){
+     
+         setRole(roleSecondCourse,discordID,member,myguild);
+     
+       } else if (facultyNumber === "3"){
+     
+         setRole(roleThirdCourse,discordID,member,myguild);
+     
+       } else if (facultyNumber === "4"){
+     
+         setRole(roleFourthCourse,discordID,member,myguild);
+     
+       }
+     
+       console.log('Received form data:', { firstName, lastName, facultyNumber});
+     
+      //  // Send a response if needed
+      //  res.send('Data received successfully!');
 
-  } else if (facultyNumber === "2"){
 
-    setRole(roleSecondCourse,discordID,member);
 
-  } else if (facultyNumber === "3"){
 
-    setRole(roleThirdCourse,discordID,member);
 
-  } else if (facultyNumber === "4"){
+     } else {
+       res.status(404).json({ success: false, error: 'Guild not found' });
+     }
+   })
+   .catch(error => {
+     console.error(`Error in route handler: ${error.message}`);
+     res.status(500).json({ success: false, error: 'Internal Server Error' });
+   });
 
-    setRole(roleFourthCourse,discordID,member);
 
-  }
-
-  console.log('Received form data:', { firstName, lastName, facultyNumber});
-
-  // Send a response if needed
-  res.send('Data received successfully!');
 });
 
 app.listen(PORT, () => {
