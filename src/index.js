@@ -235,6 +235,11 @@ async function getGuildById(guildID,client) {
   }
 }
 
+async function getCourseRole(courseName,myguild) {
+  let role = await myguild.roles.cache.find((n=> n.name === courseName));
+  return role;
+}
+
 // Your route handling
 app.post('/api/User/discord-info', (req, res) => {
 
@@ -253,13 +258,10 @@ app.post('/api/User/discord-info', (req, res) => {
 
 
        const username = `${firstName} ${lastName}`;
-       const roleFirstCourse = myguild.roles.cache.find((n=> n.name === "First Course"))
-       const roleSecondCourse = myguild.roles.cache.find((n=> n.name === "Second Course"))
-       const roleThirdCourse = myguild.roles.cache.find((n=> n.name === "Third Course"))
-       const roleFourthCourse = myguild.roles.cache.find((n=> n.name === "Fourth Course"))
-     
-     
-     
+      //  const roleFirstCourse = myguild.roles.cache.find((n=> n.name === "First Course"))
+      //  const roleSecondCourse = myguild.roles.cache.find((n=> n.name === "Second Course"))
+      //  const roleThirdCourse = myguild.roles.cache.find((n=> n.name === "Third Course"))
+      //  const roleFourthCourse = myguild.roles.cache.find((n=> n.name === "Fourth Course"))
      
        const member = myguild.members.cache.get(discordID);
      
@@ -267,20 +269,30 @@ app.post('/api/User/discord-info', (req, res) => {
      
      
        if (facultyNumber === "1") {
-      
-         setRole(roleFirstCourse,discordID,member,myguild);
-     
+          getCourseRole("First Course",myguild).then(role =>{
+          setRole(role,discordID,member,myguild);
+        })
+         
+        
        } else if (facultyNumber === "2"){
-     
-         setRole(roleSecondCourse,discordID,member,myguild);
-     
+
+        getCourseRole("Second Course",myguild).then(role =>{
+          setRole(role,discordID,member,myguild);
+        })
+         
+        
        } else if (facultyNumber === "3"){
-     
-         setRole(roleThirdCourse,discordID,member,myguild);
-     
+
+        getCourseRole("Third Course",myguild).then(role =>{
+          setRole(role,discordID,member,myguild);
+        })
+         
+         
        } else if (facultyNumber === "4"){
-     
-         setRole(roleFourthCourse,discordID,member,myguild);
+         getCourseRole("Fourth Course",myguild).then(role =>{
+          setRole(role,discordID,member,myguild);
+         })
+         
      
        }
      
