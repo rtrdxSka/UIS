@@ -13,6 +13,7 @@ export interface MoodleCohort {
 }
 
 export interface DataToUpdateCohort {
+    cohortId: string;
     studentsToRemoveFromCohort: StudentInfo[];
     studentsToAddToCohort: StudentInfo[];
 }
