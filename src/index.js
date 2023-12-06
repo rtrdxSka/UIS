@@ -17,6 +17,13 @@ const client = new Client({
   ],
 });
 
+const roleNumber = {
+  "First Course" : 1,
+  "Second Course" : 2,
+  "Third Course" : 3,
+  "Fourth Course" : 4
+}
+
 const commands = [
   {
     name: 'auth',
@@ -235,9 +242,39 @@ async function getGuildById(guildID,client) {
   }
 }
 
+async function getCourseRole(courseName,myguild) {
+  try {
+    let role = await myguild.roles.cache.find((n=> n.name === courseName));
+    return role;
+  }catch(error){
+    console.error(`Error getting role: ${error.message}`);
+  }
+}
+
+async function getUser(discordID,myguild){
+  const user = await myguild.members.cache.get(discordID);
+
+  return user;
+}
+
+async function removeRoles(discordID,role,myguild){
+  const roleAsNumber = roleNumber[role];
+  myguild.members.fetch(discordID)
+  .then(member=>{
+    const allRoles = member.roles.cache;
+    allRoles.forEach(element => {
+      const currentRole = roleNumber[element.name];
+      if(roleAsNumber < currentRole){
+        member.roles.remove(element)
+        console.log(`Role ${element.name} removed for ${member.user.tag}`);
+      }
+    });
+  })
+}
+
+
 // Your route handling
 app.post('/api/User/discord-info', (req, res) => {
-
 
   const firstName = req.body.firstname;
   const lastName = req.body.lastname;
@@ -251,47 +288,47 @@ app.post('/api/User/discord-info', (req, res) => {
      if (myguild) {
        res.status(200).json({ success: true });
 
-
        const username = `${firstName} ${lastName}`;
-       const roleFirstCourse = myguild.roles.cache.find((n=> n.name === "First Course"))
-       const roleSecondCourse = myguild.roles.cache.find((n=> n.name === "Second Course"))
-       const roleThirdCourse = myguild.roles.cache.find((n=> n.name === "Third Course"))
-       const roleFourthCourse = myguild.roles.cache.find((n=> n.name === "Fourth Course"))
      
-     
-     
-     
-       const member = myguild.members.cache.get(discordID);
-     
-       setName(discordID,username,myguild);
-     
+      //  const member = myguild.members.cache.get(discordID);
+
+      getUser(discordID,myguild).then(member=>{
+        setName(discordID,username,myguild);
      
        if (facultyNumber === "1") {
-      
-         setRole(roleFirstCourse,discordID,member,myguild);
-     
+          getCourseRole("First Course",myguild).then(role =>{
+          setRole(role,discordID,member,myguild);
+        }) 
+         removeRoles(discordID,"First Course",myguild)
+
+
        } else if (facultyNumber === "2"){
-     
-         setRole(roleSecondCourse,discordID,member,myguild);
-     
+        getCourseRole("Second Course",myguild).then(role =>{
+          setRole(role,discordID,member,myguild);
+        })
+        removeRoles(discordID,"Second Course",myguild)
+         
        } else if (facultyNumber === "3"){
-     
-         setRole(roleThirdCourse,discordID,member,myguild);
-     
+
+        getCourseRole("Third Course",myguild).then(role =>{
+          setRole(role,discordID,member,myguild);
+        })
+        removeRoles(discordID,"Third Course",myguild)
        } else if (facultyNumber === "4"){
-     
-         setRole(roleFourthCourse,discordID,member,myguild);
-     
+         getCourseRole("Fourth Course",myguild).then(role =>{
+          setRole(role,discordID,member,myguild);
+         })
+         removeRoles(discordID,"Fourth Course",myguild)
        }
+      })
+       
+     
+       
      
        console.log('Received form data:', { firstName, lastName, facultyNumber});
      
       //  // Send a response if needed
       //  res.send('Data received successfully!');
-
-
-
-
 
      } else {
        res.status(404).json({ success: false, error: 'Guild not found' });
@@ -301,8 +338,6 @@ app.post('/api/User/discord-info', (req, res) => {
      console.error(`Error in route handler: ${error.message}`);
      res.status(500).json({ success: false, error: 'Internal Server Error' });
    });
-
-
 });
 
 app.listen(PORT, () => {
