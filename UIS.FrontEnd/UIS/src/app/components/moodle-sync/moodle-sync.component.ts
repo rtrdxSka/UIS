@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./moodle-sync.component.css']
 })
 export class MoodleSyncComponent {
-
+  
 }
