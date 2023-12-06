@@ -242,8 +242,6 @@ async function getGuildById(guildID,client) {
   }
 }
 
-<<<<<<< Updated upstream
-=======
 async function getCourseRole(courseName,myguild) {
   try {
     let role = await myguild.roles.cache.find((n=> n.name === courseName));
@@ -275,7 +273,6 @@ async function removeRoles(discordID,role,myguild){
 }
 
 
->>>>>>> Stashed changes
 // Your route handling
 app.post('/api/User/discord-info', (req, res) => {
 
@@ -292,20 +289,6 @@ app.post('/api/User/discord-info', (req, res) => {
        res.status(200).json({ success: true });
 
        const username = `${firstName} ${lastName}`;
-<<<<<<< Updated upstream
-       const roleFirstCourse = myguild.roles.cache.find((n=> n.name === "First Course"))
-       const roleSecondCourse = myguild.roles.cache.find((n=> n.name === "Second Course"))
-       const roleThirdCourse = myguild.roles.cache.find((n=> n.name === "Third Course"))
-       const roleFourthCourse = myguild.roles.cache.find((n=> n.name === "Fourth Course"))
-     
-     
-     
-     
-       const member = myguild.members.cache.get(discordID);
-     
-       setName(discordID,username,myguild);
-=======
->>>>>>> Stashed changes
      
       //  const member = myguild.members.cache.get(discordID);
 
@@ -313,23 +296,6 @@ app.post('/api/User/discord-info', (req, res) => {
         setName(discordID,username,myguild);
      
        if (facultyNumber === "1") {
-<<<<<<< Updated upstream
-      
-         setRole(roleFirstCourse,discordID,member,myguild);
-     
-       } else if (facultyNumber === "2"){
-     
-         setRole(roleSecondCourse,discordID,member,myguild);
-     
-       } else if (facultyNumber === "3"){
-     
-         setRole(roleThirdCourse,discordID,member,myguild);
-     
-       } else if (facultyNumber === "4"){
-     
-         setRole(roleFourthCourse,discordID,member,myguild);
-     
-=======
           getCourseRole("First Course",myguild).then(role =>{
           setRole(role,discordID,member,myguild);
         }) 
@@ -353,7 +319,6 @@ app.post('/api/User/discord-info', (req, res) => {
           setRole(role,discordID,member,myguild);
          })
          removeRoles(discordID,"Fourth Course",myguild)
->>>>>>> Stashed changes
        }
       })
        
