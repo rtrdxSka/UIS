@@ -11,7 +11,8 @@ namespace UIS.API.Controllers
     {
         private readonly ICohortService _cohortService;
 
-        public CohortController(ICohortService cohortService)        {
+        public CohortController(ICohortService cohortService)
+        {
             _cohortService = cohortService;
         }
 
