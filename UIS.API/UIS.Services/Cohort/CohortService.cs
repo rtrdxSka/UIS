@@ -175,13 +175,14 @@ namespace UIS.Services.Cohort
         }
 
         private Dictionary<string, List<StudentInfoDTO>> ExtractStudentDataByCohortsFromCSV()
-        {
-            var unsortedRecords = this.ExtractStudentDataFromCSV();
+        {       
+          //  var unsortedRecords = this.ExtractStudentDataFromCSV();
 
             // Groups the students by cohortId and sets the dictionary key to the cohortId
-            var groupedRecords = unsortedRecords.GroupBy(s => s.Cohort1).ToDictionary(g => g.Key, g => g.ToList());
+          //  var groupedRecords = unsortedRecords.GroupBy(s => s.Cohort1).ToDictionary(g => g.Key, g => g.ToList());
 
-            return groupedRecords;
+            //return groupedRecords;
+            return null;
         }
     }
 }
