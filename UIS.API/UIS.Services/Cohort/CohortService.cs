@@ -5,12 +5,13 @@ using System.Text;
 using System.Text.Json;
 using UIS.DAL.Constants;
 using UIS.DAL.DTO;
+using Microsoft.AspNetCore.Http;
 
 namespace UIS.Services.Cohort
 {
     public class CohortService : ICohortService
     {
-        public async Task<List<CohortUpdateDataDTO>> ExtractMoodleSyncDataAsync(HttpClient client, string jwt)
+        public async Task<List<CohortUpdateDataDTO>> ExtractMoodleSyncDataAsync(HttpClient client, string jwt, IFormFile csvFile)
         {
             var allMoodleCohorts = await GetMoodleCohortsAsync(client, jwt);
             var studentsFromCSVGroupedByCohorts = ExtractStudentDataByCohortsFromCSV();
@@ -87,12 +88,11 @@ namespace UIS.Services.Cohort
             return studentsFromMoodle;
         }
 
-        public List<StudentInfoDTO> ExtractStudentDataFromCSV()
+        public List<StudentInfoDTO> ExtractStudentDataFromCSV(IFormFile csvFile)
         {
             // Refactor to work with a csv that is received from POST request
 
             List<StudentInfoDTO> records = new List<StudentInfoDTO>();
-            string pathToCSV = @"C:\\Users\\User\\Downloads\cohort_interrupt.csv";
 
             // Read the CSV file and map it to a list of StudentInfoDTO objects
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -101,7 +101,7 @@ namespace UIS.Services.Cohort
                 Encoding = Encoding.UTF8 // Set the encoding
             };
 
-            using (var reader = new StreamReader(pathToCSV))
+            using (var reader = new StreamReader(csvFile.OpenReadStream()))
             using (var csv = new CsvReader(reader, config))
             {
                 records = csv.GetRecords<StudentInfoDTO>().ToList();
