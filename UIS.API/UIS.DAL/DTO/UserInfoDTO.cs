@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoodleIntegration.Shared.DTO
+namespace UIS.DAL.DTO
 {
     public class UserInfoDTO
     {
