@@ -1,0 +1,51 @@
+/* User table */
+
+.user-list-container {
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.07em;
+
+    border: 1px solid rgb(229, 229, 229);
+    -webkit-box-shadow: 0px 0px 7px -2px rgba(0, 0, 0, 0.55);
+    -moz-box-shadow: 0px 0px 7px -2px rgba(0, 0, 0, 0.55);
+    box-shadow: 0px 0px 7px -2px rgba(0, 0, 0, 0.55);
+    border-radius: 8px;
+
+    overflow: hidden;
+    padding: 16px;
+}
+
+.form-select {
+    width: 240px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 16px 0px;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: rgb(31, 31, 31);
+}
+
+.user-table th{
+    font-weight: 600;
+}
+
+.user-table td{
+    border-top: 1px solid rgba(134, 134, 134, 0.16);
+}
+
+.user-table th, td {
+    text-align: left;
+    padding: 12px;
+}
+
+.added-student {
+    background-color: rgb(108, 255, 108);
+}
+
+.removed-student {
+    background-color: rgb(255, 103, 103);
+}
