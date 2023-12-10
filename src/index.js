@@ -2,11 +2,16 @@ require('dotenv').config();
 const express = require("express");
 const axios = require("axios");
 const mysql = require('mysql2');
+const crypto = require('crypto');
 const { Client, IntentsBitField, GuildMember } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v10');
 
+// const secretKey = crypto.randomBytes(32);
 
+const hash = crypto.createHash('sha256');
+hash.update(process.env.secretKey);
+const secretKey = hash.digest();
 
 const client = new Client({
   intents: [
@@ -34,96 +39,6 @@ const commands = [
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
 
-// function getGuildID(tableName,discordID){
-//         // Create a connection
-//         const connection = mysql.createConnection({
-//           host: 'localhost',
-//           user: 'root',
-//           password: 'Admin123!',
-//           database: 'botuserinfo'
-//         });
-
-//         const query = `SELECT guild_id FROM ${tableName} WHERE discord_id= ${discordID}`;
-
-//         connection.query(query)
-// }
-
-// function userExists(tableName, data, callback) {
-
-//     // Create a connection
-//     const connection = mysql.createConnection({
-//       host: 'localhost',
-//       user: 'root',
-//       password: 'Admin123!',
-//       database: 'botuserinfo'
-//     });
-
-//   const { discord_id, guild_id } = data;
-//   const query = `SELECT * FROM ${tableName} WHERE discord_id = ? AND guild_id = ?`;
-
-//   connection.query(query, [discord_id, guild_id], (err, results) => {
-//     if (err) {
-//       console.error('Error checking user existence:', err);
-//       return callback(err, null);
-//     }
-
-//     const userExists = results.length > 0;
-//     callback(null, userExists);
-//   });
-// }
-
-// function insertData(tableName, data) {
-
-//       // Create a connection
-//       const connection = mysql.createConnection({
-//         host: 'localhost',
-//         user: 'root',
-//         password: 'Admin123!',
-//         database: 'botuserinfo'
-//       });
-
-//   userExists(tableName, data, (err, exists) => {
-//     if (err) {
-//       console.error('Error checking user existence:', err);
-//       return;
-//     }
-
-//     if (exists) {
-//       console.log('User already exists. Skipping insertion.');
-//       connection.end();
-//     } else {
-//       connection.connect((err) => {
-//         if (err) {
-//           console.error('Error connecting to MySQL:', err);
-//           return;
-//         }
-//         console.log('Connected to MySQL database');
-
-//         // SQL query to insert data into the specified table
-//         const insertQuery = `INSERT INTO ${tableName} SET ?`;
-
-//         // Execute the query with the data
-//         connection.query(insertQuery, data, (err, results) => {
-//           if (err) {
-//             console.error('Error inserting data:', err);
-//           } else {
-//             console.log('Data inserted successfully. Inserted ID:', results.insertId);
-//           }
-
-//           // Close the connection when done
-//           connection.end((err) => {
-//             if (err) {
-//               console.error('Error closing MySQL connection:', err);
-//             } else {
-//               console.log('MySQL connection closed');
-//             }
-//           });
-//         });
-//       });
-//     }
-//   });
-// }
-
 const registerCommands = async (guildId) => {
   try {
     console.log(`Registering commands for guild: ${guildId}`);
@@ -148,20 +63,10 @@ client.on('interactionCreate', async (interaction) => {
 
   if (interaction.commandName === 'auth') {
 
-    
-  interaction.user.send(`http://localhost/local/oauth/login.php?client_id=ClientId1&response_type=code&discord_id=${interaction.user.id}&guild_id=${interaction.guild.id}`);
+    const encryptedDiscord = encryptToURLSafe(interaction.user.id, secretKey);
+    const encryptedGuild = encryptToURLSafe(interaction.guild.id, secretKey)
 
-
-//     // Example data
-// const studentData = {
-//   discord_id: interaction.user.id,
-//   guild_id: interaction.guild.id
-//   // Add other fields as needed
-// };
-
-//   insertData("user_data",studentData);
-
-
+  interaction.user.send(`http://localhost/local/oauth/login.php?client_id=ClientId1&response_type=code&discord_id=${encryptedDiscord}&guild_id=${encryptedGuild}`);
 
   return 0;
   }
@@ -176,6 +81,29 @@ client.on('guildCreate', (guild) => {
 
 client.login(process.env.TOKEN);
 
+// Encryption function
+function encryptToURLSafe(text, secretKey) {
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(secretKey), iv);
+  let encrypted = cipher.update(text);
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+
+  const ivBase64 = iv.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+  const encryptedBase64 = encrypted.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+
+  return `${ivBase64}:${encryptedBase64}`;
+}
+
+// Decryption function
+function decryptFromURLSafe(encryptedURLSafe, secretKey) {
+  const parts = encryptedURLSafe.split(':');
+  const iv = Buffer.from(parts[0].replace(/-/g, '+').replace(/_/g, '/'), 'base64');
+  const encryptedText = Buffer.from(parts[1].replace(/-/g, '+').replace(/_/g, '/'), 'base64');
+  const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(secretKey), iv);
+  let decrypted = decipher.update(encryptedText);
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+  return decrypted.toString();
+}
 
 function setRole(role,discordID,member,guild){
 // Fetch the member asynchronously
@@ -202,11 +130,12 @@ guild.members.fetch(discordID)
 }
 
 function setName(discordID,username,guild){
-
+  console.log(discordID);
   guild.members.fetch(discordID)
   .then(member => {
     // Check if the member is found
     if (member) {
+     
       // Change the username (nickname) of the member
       member.setNickname(username)
         .then(() => {
@@ -232,7 +161,6 @@ app.use('/api/User/discord-info', (req, res, next) => {
   console.log('Received something at /api/User/discord-info');
   next(); // Pass control to the next middleware
 });
-// const guild = client.guilds.cache.get(process.env.GUILD_ID);
 
 async function getGuildById(guildID,client) {
   try {
@@ -254,7 +182,7 @@ async function getCourseRole(courseName,myguild) {
 }
 
 async function getUser(discordID,myguild){
-  const user = await myguild.members.cache.get(discordID);
+  const user = await myguild.members.fetch(discordID);
 
   return user;
 }
@@ -281,10 +209,11 @@ app.post('/api/User/discord-info', (req, res) => {
   const firstName = req.body.firstname;
   const lastName = req.body.lastname;
   const facultyNumber = req.body.faculty_number;
-  const discordID = req.body.discord_id;
+  const discordID = decryptFromURLSafe(req.body.discord_id,secretKey);
+  const guildID  = decryptFromURLSafe(req.body.guild_id,secretKey);
 
    // Use .then to handle the asynchronous operation
-   getGuildById(req.body.guild_id, client)
+   getGuildById(guildID, client)
    .then(myguild => {
      // Continue with the rest of your code using myguild
      if (myguild) {
