@@ -12,7 +12,13 @@ namespace UIS.API.Controllers
 
       private readonly IAuthService _authService;
 
-      public async Task<IActionResult> HandleMoodleAuthCallbackAsync(string code, string discord_id, string guild_id)
+        public UserController(IAuthService authService)
+        {
+            _authService = authService;
+        }
+
+        [HttpGet("discord-info")]
+        public async Task<IActionResult> HandleMoodleAuthCallbackAsync(string code, string discord_id, string guild_id)
  {
 
      using (var client = new HttpClient())
