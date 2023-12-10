@@ -1,10 +1,10 @@
 export interface StudentInfo {
-    id: string;
-    idNumber: string;
-    auth: string;
-    firstName: string;
-    lastName: string;
+    username: string;
     email: string;
+    cohort1: string;
+    firstname: string;
+    middlename: string;
+    lastname: string;
 }
 
 export interface MoodleCohort {
@@ -14,6 +14,8 @@ export interface MoodleCohort {
 
 export interface DataToUpdateCohort {
     cohortId: string;
-    studentsToRemoveFromCohort: StudentInfo[];
+    cohortName: string;
+    allStudents: StudentInfo[];
     studentsToAddToCohort: StudentInfo[];
+    studentsToRemoveFromCohort: StudentInfo[];
 }

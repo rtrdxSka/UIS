@@ -14,7 +14,7 @@ namespace UIS.Services.Cohort
         public async Task<List<CohortUpdateDataDTO>> ExtractMoodleSyncDataAsync(HttpClient client, string jwt, IFormFile csvFile)
         {
             var allMoodleCohorts = await GetMoodleCohortsAsync(client, jwt);
-            var studentsFromCSVGroupedByCohorts = ExtractStudentDataByCohortsFromCSV();
+            var studentsFromCSVGroupedByCohorts = ExtractStudentDataByCohortsFromCSV(csvFile);
 
             List<CohortUpdateDataDTO> cohortsUpdateData = new List<CohortUpdateDataDTO>();
 
@@ -41,7 +41,7 @@ namespace UIS.Services.Cohort
                 // List of student ids from moodle, matching the given cohort
                 var studentsIdsFromMoodle = studentIdsFromMoodle[0].userids ?? throw new Exception();
 
-                var moodleUpdateData = await GetMoodleUpdateDataAsync(client, jwt, studentsIdsFromMoodle, studentsFromCsv);
+                var moodleUpdateData = await GetMoodleUpdateDataAsync(client, jwt, studentsIdsFromMoodle, studentsFromCsv, moodleCohort.name);
                 moodleUpdateData.CohortId = moodleCohort.id;
 
                 cohortsUpdateData.Add(moodleUpdateData);
@@ -135,12 +135,20 @@ namespace UIS.Services.Cohort
             }
         }
 
-        private async Task<CohortUpdateDataDTO> GetMoodleUpdateDataAsync(HttpClient client, string jwt, List<int> studentsIdsFromMoodle, List<StudentInfoDTO> studentsFromCsv)
+        private async Task<CohortUpdateDataDTO> GetMoodleUpdateDataAsync(HttpClient client, string jwt, List<int> studentsIdsFromMoodle, List<StudentInfoDTO> studentsFromCsv, string cohortName)
         {
             // If there is no cohort in moodle, add it?
             // Keeps a copy of the id of the students from moodle and removes a student from the list if he is present in the moodle CSV
             // If the list is not empty, the users inside are to be removed
             var trackStudentsToRemoveFromMoodle = studentsIdsFromMoodle.ToList();
+
+            List<StudentInfoDTO> allStudents = new List<StudentInfoDTO>();
+
+            foreach (var studentId in studentsIdsFromMoodle)
+            {
+                var student = await GetUserByIdAsync(client, studentId, jwt);
+                allStudents.Add(student);
+            }
 
             // Removes the students that are already in moodle from the lists of students from moodle and csv
             // If the student is in moodle but not in the csv -> delete student from the cohort
@@ -169,19 +177,21 @@ namespace UIS.Services.Cohort
             CohortUpdateDataDTO dataToUpdateMoodleDTO = new CohortUpdateDataDTO();
             dataToUpdateMoodleDTO.StudentsToRemoveFromCohort = studentsToRemoveFromCohort;
             dataToUpdateMoodleDTO.StudentsToAddToCohort = studentsFromCsv;
+            dataToUpdateMoodleDTO.AllStudents = allStudents;
+            dataToUpdateMoodleDTO.CohortName = cohortName;
 
             // Returns the list of students for upload and remove
             return dataToUpdateMoodleDTO;
         }
 
-        private Dictionary<string, List<StudentInfoDTO>> ExtractStudentDataByCohortsFromCSV()
-        {       
-          //  var unsortedRecords = this.ExtractStudentDataFromCSV();
+        private Dictionary<string, List<StudentInfoDTO>> ExtractStudentDataByCohortsFromCSV(IFormFile csvFile)
+        {
+            var unsortedRecords = ExtractStudentDataFromCSV(csvFile);
 
             // Groups the students by cohortId and sets the dictionary key to the cohortId
-          //  var groupedRecords = unsortedRecords.GroupBy(s => s.Cohort1).ToDictionary(g => g.Key, g => g.ToList());
+            var groupedRecords = unsortedRecords.GroupBy(s => s.Cohort1).ToDictionary(g => g.Key, g => g.ToList());
 
-            //return groupedRecords;
+            return groupedRecords;
             return null;
         }
     }

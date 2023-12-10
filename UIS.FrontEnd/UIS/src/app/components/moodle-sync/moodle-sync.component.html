@@ -1,0 +1,59 @@
+<div>
+    <form [formGroup]="csvForm" (ngSubmit)="getCohortsUpdateData()">
+        <input type="file" id="csvFile" (change)="onUploadFile($event)" formControlName="csvFile">
+    
+        <button type="submit">
+            Изпрати
+        </button>
+    </form>
+</div>
+
+@defer (when cohortsUpdateData) {
+    <select class="form-select" [(ngModel)]="selectedCohort">
+        @for (cohort of cohortsUpdateData; track cohort.cohortId) {
+            <option [ngValue]="cohort">{{ cohort.cohortName }}</option>
+        }
+    </select>
+
+
+   @defer (when selectedCohort) {
+        <div class="user-list-container">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>First name</th>
+                        <th>Middle name</th>
+                        <th>Last name</th>
+                        <th>Email</th>
+                        <th>Cohort</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- All students from the cohort -->
+                    <ng-container *ngTemplateOutlet="dataCols; context: { students: selectedCohort.allStudents }"></ng-container>
+
+                    <!-- Students that will be added -->
+                    <ng-container class="removed-student" *ngTemplateOutlet="dataCols; context: { students: selectedCohort.studentsToAddToCohort, class: 'added-student' }"></ng-container>
+
+                    <!-- Students that will be removed -->
+                    <ng-container class="removed-student" *ngTemplateOutlet="dataCols; context: { students: selectedCohort.studentsToRemoveFromCohort, class: 'removed-student' }"></ng-container>
+                </tbody>
+            </table>
+        </div>
+   }
+}
+
+<ng-template #dataCols let-students="students" let-class="class">
+    @for (studentInfo of students; track selectedCohort.cohortId)
+    {
+        <tr [ngClass]="class">
+            <td>{{ studentInfo.username }}</td>
+            <td>{{ studentInfo.firstname }}</td>
+            <td>{{ studentInfo.middlename }}</td>
+            <td>{{ studentInfo.lastname }}</td>
+            <td>{{ studentInfo.email }}</td>
+            <td>{{ studentInfo.cohort1 }}</td>
+        </tr>
+    }
+</ng-template>

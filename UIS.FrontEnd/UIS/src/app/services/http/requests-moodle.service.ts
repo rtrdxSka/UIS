@@ -14,7 +14,7 @@ export class RequestsMoodleService {
     constructor(private http: HttpClient) { }
 
     private moodleApiUrl = 'http://localhost/webservice/rest/server.php';
-    private uisApiUrl = 'http://localhost:7009/';
+    private uisApiUrl = 'https://localhost:7059/api/Cohort';
     private wstoken = '9d21c61ac5ffa93a2dc9a3e6102fc67a';
 
     public getUsersInCohort(cohortId: number): Observable<MoodleCohort> {
@@ -35,8 +35,8 @@ export class RequestsMoodleService {
     }
 
     // TODO: Sends CSV file through headers
-    public getUpdatedCohortInfo(): Observable<DataToUpdateCohort> {
-        return this.http.post<DataToUpdateCohort>(`${this.uisApiUrl}`, { });
+    public getUpdatedCohortInfo(formData: FormData): Observable<DataToUpdateCohort[]> {
+        return this.http.post<DataToUpdateCohort[]>(`${this.uisApiUrl}/SyncCohorts`, formData);
     }
 
     // TODO: Sends students to add to cohort and students to delete from cohort StudentInfo model
