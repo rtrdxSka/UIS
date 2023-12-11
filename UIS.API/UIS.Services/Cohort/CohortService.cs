@@ -98,8 +98,8 @@ namespace UIS.Services.Cohort
                     new KeyValuePair<string, string>("moodlewsrestformat", "json"),
                     new KeyValuePair<string, string>("members[0][cohorttype][type]", "id"),
                     new KeyValuePair<string, string>("members[0][cohorttype][value]", cohortId),
-                    new KeyValuePair<string, string>("members[0][usertype][type]", "id"),
-                    new KeyValuePair<string, string>("members[0][usertype][value]", student.Id),
+                    new KeyValuePair<string, string>("members[0][usertype][type]", "username"),
+                    new KeyValuePair<string, string>("members[0][usertype][value]", student.Username),
                 });
 
                 await client.PostAsync(MoodleAuthConstants.RestAPIUrl, content);
@@ -115,7 +115,7 @@ namespace UIS.Services.Cohort
                     new KeyValuePair<string, string>("wsfunction", "core_cohort_delete_cohort_members"),
                     new KeyValuePair<string, string>("moodlewsrestformat", "json"),
                     new KeyValuePair<string, string>("members[0][cohortid]", cohortId),
-                    new KeyValuePair<string, string>("members[0][userid]", student.Id),
+                    new KeyValuePair<string, string>("members[0][userid]", student.Id.ToString()),
                 });
 
                 await client.PostAsync(MoodleAuthConstants.RestAPIUrl, content);
@@ -130,6 +130,8 @@ namespace UIS.Services.Cohort
             // Read the CSV file and map it to a list of StudentInfoDTO objects
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
+                MissingFieldFound = null,
+                HeaderValidated = null, // Ignore missing headers
                 HasHeaderRecord = true, // The first row is the header
                 Encoding = Encoding.UTF8 // Set the encoding
             };
@@ -225,7 +227,6 @@ namespace UIS.Services.Cohort
             var groupedRecords = unsortedRecords.GroupBy(s => s.Cohort1).ToDictionary(g => g.Key, g => g.ToList());
 
             return groupedRecords;
-            return null;
         }
     }
 }

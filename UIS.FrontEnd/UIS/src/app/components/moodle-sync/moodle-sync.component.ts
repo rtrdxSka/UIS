@@ -3,7 +3,7 @@ import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 
-import { RequestsMoodleService } from './../../services/http/requests-moodle.service';
+import { RequestsMoodleService, UpdateMoodleBody } from './../../services/http/requests-moodle.service';
 
 import { DataToUpdateCohort } from './../../models/moodle';
 
@@ -49,6 +49,51 @@ export class MoodleSyncComponent {
 
   public onUploadFile(event: any) {
     this.csvFile = event.target.files[0];
+  }
+
+  public revertChanges() {
+    this.cohortsUpdateData = [];
+  }
+
+  public updateCohorts() {
+    this.removeStudentsFromCohort();
+    this.addStudentsToCohort();
+  }
+
+  private removeStudentsFromCohort(): void {
+    for(let cohortData of this.cohortsUpdateData) {
+      if(!cohortData.studentsToRemoveFromCohort) {
+        return;
+      }
+
+      const removeStudentsBody: UpdateMoodleBody = {
+        data: cohortData.studentsToRemoveFromCohort,
+        cohortId: cohortData.cohortId.toString(),
+      }
+  
+      this.requestsMoodleService.removeStudentsFromCohort(removeStudentsBody).subscribe(() => {
+        console.log('successful');
+        // TODO: Add snackbar
+      });
+    }
+  }
+
+  private addStudentsToCohort(): void {
+    for(let cohortData of this.cohortsUpdateData) {
+      if(!cohortData.studentsToAddToCohort) {
+        return;
+      }
+
+      const addStudentsBody: UpdateMoodleBody = {
+        data: cohortData.studentsToAddToCohort,
+        cohortId: cohortData.cohortId.toString(),
+      }
+  
+      this.requestsMoodleService.addStudentsToCohort(addStudentsBody).subscribe(() => {
+        console.log('successful');
+        // TODO: Add snackbar
+      });
+    }
   }
 
   private createForm() {

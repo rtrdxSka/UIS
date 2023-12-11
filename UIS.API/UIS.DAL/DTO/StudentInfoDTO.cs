@@ -7,7 +7,7 @@ namespace UIS.DAL.DTO
     {
         [JsonPropertyName("id")]
         [Name("id")]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         [JsonPropertyName("username")]
         [Name("username")]
@@ -19,7 +19,7 @@ namespace UIS.DAL.DTO
 
         [JsonPropertyName("middlename")]
         [Name("middlename")]
-        public string MiddleName { get; set; }
+        public string? MiddleName { get; set; }
 
         [JsonPropertyName("lastname")]
         [Name("lastname")]
@@ -31,6 +31,6 @@ namespace UIS.DAL.DTO
 
         [JsonPropertyName("cohort1")]
         [Name("cohort1")]
-        public string Cohort1 { get; set; }
+        public string? Cohort1 { get; set; }
     }
 }

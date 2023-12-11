@@ -1,4 +1,5 @@
 export interface StudentInfo {
+    id: number;
     username: string;
     email: string;
     cohort1: string;

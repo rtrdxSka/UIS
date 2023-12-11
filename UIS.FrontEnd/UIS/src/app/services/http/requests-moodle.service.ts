@@ -5,6 +5,11 @@ import { Observable } from "rxjs";
 
 import { DataToUpdateCohort, MoodleCohort, StudentInfo } from "../../models/moodle";
 
+export interface UpdateMoodleBody {
+    data: StudentInfo[];
+    cohortId: string;
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -34,15 +39,16 @@ export class RequestsMoodleService {
         return this.http.post<StudentInfo>(`${this.moodleApiUrl}`, body);
     }
 
-    // TODO: Sends CSV file through headers
     public getUpdatedCohortInfo(formData: FormData): Observable<DataToUpdateCohort[]> {
         return this.http.post<DataToUpdateCohort[]>(`${this.uisApiUrl}/SyncCohorts`, formData);
     }
 
-    // TODO: Sends students to add to cohort and students to delete from cohort StudentInfo model
-    // Updates the moodle cohorts - deletes and adds users 
-    public updateMoodleData() {
-        return this.http.post(`${this.uisApiUrl}`, {});
+    public removeStudentsFromCohort(body: UpdateMoodleBody) {
+        return this.http.post(`${this.uisApiUrl}/RemoveStudentsFromCohort`, body);
+    }
+
+    public addStudentsToCohort(body: UpdateMoodleBody) {
+        return this.http.post(`${this.uisApiUrl}/AddStudentsToCohort`, body);
     }
 
 }

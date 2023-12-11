@@ -35,13 +35,13 @@ namespace UIS.API.Controllers
         }
 
         [HttpPost("RemoveStudentsFromCohort")]
-        public async Task<ActionResult> DeleteStudentsFromCohortAsync([FromBody] List<StudentInfoDTO> studentsToRemoveFromCohort, [FromBody] string cohortId)
+        public async Task<ActionResult> DeleteStudentsFromCohortAsync([FromBody] MoodleUpdateCohortsDTO updateData)
         {
             using (var client = new HttpClient())
             {
-                if(studentsToRemoveFromCohort != null)
+                if(updateData.data != null)
                 {
-                    await _cohortService.DeleteStudentsFromMoodleCohortAsync(client, "9d21c61ac5ffa93a2dc9a3e6102fc67a", studentsToRemoveFromCohort, cohortId);
+                    await _cohortService.DeleteStudentsFromMoodleCohortAsync(client, "9d21c61ac5ffa93a2dc9a3e6102fc67a", updateData.data, updateData.cohortId);
 
                     return Ok();
                 }
@@ -53,13 +53,13 @@ namespace UIS.API.Controllers
         }
 
         [HttpPost("AddStudentsToCohort")]
-        public async Task<ActionResult> AddStudentsToCohortAsync([FromBody] List<StudentInfoDTO> studentsToAddToCohort, [FromBody] string cohortId)
+        public async Task<ActionResult> AddStudentsToCohortAsync([FromBody] MoodleUpdateCohortsDTO updateData)
         {
             using (var client = new HttpClient())
             {
-                if (studentsToAddToCohort != null)
+                if (updateData.data != null)
                 {
-                    await _cohortService.AddStudentToMoodleCohortAsync(client, "9d21c61ac5ffa93a2dc9a3e6102fc67a", studentsToAddToCohort, cohortId);
+                    await _cohortService.AddStudentToMoodleCohortAsync(client, "9d21c61ac5ffa93a2dc9a3e6102fc67a", updateData.data, updateData.cohortId);
 
                     return Ok();
                 }
