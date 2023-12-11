@@ -5,6 +5,10 @@ namespace UIS.DAL.DTO
 {
     public class StudentInfoDTO
     {
+        [JsonPropertyName("id")]
+        [Name("id")]
+        public string Id { get; set; }
+
         [JsonPropertyName("username")]
         [Name("username")]
         public string Username { get; set; }    

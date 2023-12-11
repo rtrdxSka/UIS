@@ -87,7 +87,40 @@ namespace UIS.Services.Cohort
 
             return studentsFromMoodle;
         }
+        public async Task AddStudentToMoodleCohort(HttpClient client, string jwt, List<StudentInfoDTO> studentsToAddToCohort, string cohortId)
+        {
+            foreach (var student in studentsToAddToCohort)
+            {
+                var content = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("wstoken", jwt),
+                    new KeyValuePair<string, string>("wsfunction", "core_cohort_add_cohort_members"),
+                    new KeyValuePair<string, string>("moodlewsrestformat", "json"),
+                    new KeyValuePair<string, string>("members[0][cohorttype][type]", "id"),
+                    new KeyValuePair<string, string>("members[0][cohorttype][value]", cohortId),
+                    new KeyValuePair<string, string>("members[0][usertype][type]", "id"),
+                    new KeyValuePair<string, string>("members[0][usertype][value]", student.Id),
+                });
 
+                await client.PostAsync(MoodleAuthConstants.RestAPIUrl, content);
+            }
+        }
+        public async Task DeleteStudentsFromMoodleCohort(HttpClient client, string jwt, List<StudentInfoDTO> studentsRemovedFromCohort, string cohortId)
+        {
+            foreach (var student in studentsRemovedFromCohort)
+            {
+                var content = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("wstoken", jwt),
+                    new KeyValuePair<string, string>("wsfunction", "core_cohort_delete_cohort_members"),
+                    new KeyValuePair<string, string>("moodlewsrestformat", "json"),
+                    new KeyValuePair<string, string>("members[0][cohortid]", cohortId),
+                    new KeyValuePair<string, string>("members[0][userid]", student.Id),
+                });
+
+                await client.PostAsync(MoodleAuthConstants.RestAPIUrl, content);
+            }
+        }
         public List<StudentInfoDTO> ExtractStudentDataFromCSV(IFormFile csvFile)
         {
             // Refactor to work with a csv that is received from POST request
