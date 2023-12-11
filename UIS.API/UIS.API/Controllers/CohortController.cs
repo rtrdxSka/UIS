@@ -34,7 +34,7 @@ namespace UIS.API.Controllers
             }
         }
 
-        [HttpPost("DeleteStudentsFromCohort")]
+        [HttpPost("RemoveStudentsFromCohort")]
         public async Task<ActionResult> DeleteStudentsFromCohortAsync([FromBody] List<StudentInfoDTO> studentsToRemoveFromCohort, [FromBody] string cohortId)
         {
             using (var client = new HttpClient())
@@ -42,6 +42,24 @@ namespace UIS.API.Controllers
                 if(studentsToRemoveFromCohort != null)
                 {
                     await _cohortService.DeleteStudentsFromMoodleCohortAsync(client, "9d21c61ac5ffa93a2dc9a3e6102fc67a", studentsToRemoveFromCohort, cohortId);
+
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+        }
+
+        [HttpPost("AddStudentsToCohort")]
+        public async Task<ActionResult> AddStudentsToCohortAsync([FromBody] List<StudentInfoDTO> studentsToAddToCohort, [FromBody] string cohortId)
+        {
+            using (var client = new HttpClient())
+            {
+                if (studentsToAddToCohort != null)
+                {
+                    await _cohortService.AddStudentToMoodleCohortAsync(client, "9d21c61ac5ffa93a2dc9a3e6102fc67a", studentsToAddToCohort, cohortId);
 
                     return Ok();
                 }
