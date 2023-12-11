@@ -42,9 +42,12 @@
         </div>
    }
 
-   <a (click)="revertChanges()">Върни промените</a>
-   <a (click)="updateCohorts()">Удобри</a>
+
 }
+<div class="btn-container">
+    <a class="btn-revert" (click)="revertChanges()">Върни промените</a>
+    <a class="btn-update" (click)="updateCohorts()">Удобри</a>
+</div>
 
 <ng-template #dataCols let-students="students" let-class="class">
     @for (studentInfo of students; track selectedCohort.cohortId)

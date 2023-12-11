@@ -49,3 +49,32 @@
 .removed-student {
     background-color: rgb(255, 103, 103);
 }
+
+.btn-container {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-container > a {
+    cursor: pointer;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 8px 24px;
+    margin-top: 16px;
+}
+
+.btn-revert {
+    background-color: rgb(255, 176, 176);
+}
+
+.btn-revert:hover {
+    background-color: rgb(255, 106, 106);
+}
+
+.btn-update {
+    background-color: rgb(198, 255, 198);
+}
+
+.btn-update:hover {
+    background-color: rgb(109, 255, 109);
+}
