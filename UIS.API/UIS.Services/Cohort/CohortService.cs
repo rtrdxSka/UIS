@@ -87,7 +87,7 @@ namespace UIS.Services.Cohort
 
             return studentsFromMoodle;
         }
-        public async Task AddStudentToMoodleCohort(HttpClient client, string jwt, List<StudentInfoDTO> studentsToAddToCohort, string cohortId)
+        public async Task AddStudentToMoodleCohortAsync(HttpClient client, string jwt, List<StudentInfoDTO> studentsToAddToCohort, string cohortId)
         {
             foreach (var student in studentsToAddToCohort)
             {
@@ -105,7 +105,7 @@ namespace UIS.Services.Cohort
                 await client.PostAsync(MoodleAuthConstants.RestAPIUrl, content);
             }
         }
-        public async Task DeleteStudentsFromMoodleCohort(HttpClient client, string jwt, List<StudentInfoDTO> studentsRemovedFromCohort, string cohortId)
+        public async Task DeleteStudentsFromMoodleCohortAsync(HttpClient client, string jwt, List<StudentInfoDTO> studentsRemovedFromCohort, string cohortId)
         {
             foreach (var student in studentsRemovedFromCohort)
             {

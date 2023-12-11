@@ -33,5 +33,23 @@ namespace UIS.API.Controllers
                 return Ok(cohortsUpdateData);
             }
         }
+
+        [HttpPost("DeleteStudentsFromCohort")]
+        public async Task<ActionResult> DeleteStudentsFromCohortAsync([FromBody] List<StudentInfoDTO> studentsToRemoveFromCohort, [FromBody] string cohortId)
+        {
+            using (var client = new HttpClient())
+            {
+                if(studentsToRemoveFromCohort != null)
+                {
+                    await _cohortService.DeleteStudentsFromMoodleCohortAsync(client, "9d21c61ac5ffa93a2dc9a3e6102fc67a", studentsToRemoveFromCohort, cohortId);
+
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+        }
     }
 }
