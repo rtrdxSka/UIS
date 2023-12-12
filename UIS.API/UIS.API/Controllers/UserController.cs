@@ -20,54 +20,53 @@ namespace UIS.API.Controllers
 
         [HttpGet("discord-info")]
         public async Task<IActionResult> HandleMoodleAuthCallbackAsync(string code, string discord_id, string guild_id)
- {
+        {
 
-     using (var client = new HttpClient())
-     {
-         // Sends request to moodle for the authentication token
-         var AuthResponse = await _authService.GetTokenAsync(client, code);
-
-         if (AuthResponse.IsSuccessStatusCode)
-         {
-             var AuthResponseContent = await AuthResponse.Content.ReadAsStringAsync();
-
-             MoodleTokenDTO moodleToken = JsonSerializer.Deserialize<MoodleTokenDTO>(AuthResponseContent);
-
-             // Sends request to moodle for the authenticated user's info
-             var UserInfoResponse = await _authService.GetUserInfoAsync(client, moodleToken);
-
-             if (UserInfoResponse.IsSuccessStatusCode)
+             using (var client = new HttpClient())
              {
-                 // Deserialise the user info
-                 var UserInfoResponseContent = await UserInfoResponse.Content.ReadAsStringAsync();
-                 UserInfoDTO userInfo = JsonSerializer.Deserialize<UserInfoDTO>(UserInfoResponseContent);
+                 // Sends request to moodle for the authentication token
+                 var AuthResponse = await _authService.GetTokenAsync(client, code);
 
-                 if (userInfo != null)
+                 if (AuthResponse.IsSuccessStatusCode)
                  {
-                     var content = new FormUrlEncodedContent(new[]
+                     var AuthResponseContent = await AuthResponse.Content.ReadAsStringAsync();
+
+                     MoodleTokenDTO moodleToken = JsonSerializer.Deserialize<MoodleTokenDTO>(AuthResponseContent);
+
+                     // Sends request to moodle for the authenticated user's info
+                     var UserInfoResponse = await _authService.GetUserInfoAsync(client, moodleToken);
+
+                     if (UserInfoResponse.IsSuccessStatusCode)
                      {
-                         new KeyValuePair<string, string>("firstname", userInfo.firstname),
-                         new KeyValuePair<string, string>("lastname",userInfo.lastname),
-                         new KeyValuePair<string, string>("faculty_number","1"),
-                         new KeyValuePair<string, string>("discord_id",discord_id),
-                         new KeyValuePair<string, string>("guild_id",guild_id)
-                     });
+                         // Deserialise the user info
+                         var UserInfoResponseContent = await UserInfoResponse.Content.ReadAsStringAsync();
+                         UserInfoDTO userInfo = JsonSerializer.Deserialize<UserInfoDTO>(UserInfoResponseContent);
 
-                     await client.PostAsync("http://localhost:4200/api/User/discord-info", content);
+                         if (userInfo != null)
+                         {
+                             var content = new FormUrlEncodedContent(new[]
+                             {
+                                 new KeyValuePair<string, string>("firstname", userInfo.firstname),
+                                 new KeyValuePair<string, string>("lastname",userInfo.lastname),
+                                 new KeyValuePair<string, string>("faculty_number","1"),
+                                 new KeyValuePair<string, string>("discord_id",discord_id),
+                                 new KeyValuePair<string, string>("guild_id",guild_id)
+                             });
 
-                     return Redirect("https://www.google.com/");
+                             await client.PostAsync("http://localhost:4200/api/User/discord-info", content);
+
+                             return Redirect("https://www.google.com/");
+                         }
+                     }
                  }
-
-                 
+                 return BadRequest();
              }
+        }
 
-         }
-         return BadRequest();
-
-     }
-
- }
+        [HttpGet]
+        public async Task<ActionResult> GetStudentDataFromUISAsync()
+        {
+            return Ok();
+        }
     }
-
- 
 }
