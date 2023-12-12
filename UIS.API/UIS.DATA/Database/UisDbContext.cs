@@ -29,5 +29,6 @@ namespace UIS.DATA.Database
         
         public DbSet<StudentInfo> Students { get; set; } = null!;
         public DbSet<DiscordData> DiscordData { get; set; } = null!;
+        public DbSet<GuildMajor> GuildData { get; set; } = null!;
     }
 }
