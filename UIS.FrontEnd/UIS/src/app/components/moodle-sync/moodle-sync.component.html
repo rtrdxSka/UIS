@@ -15,18 +15,17 @@
         }
     </select>
 
-
    @defer (when selectedCohort) {
         <div class="user-list-container">
             <table class="user-table">
                 <thead>
                     <tr>
-                        <th>Username</th>
-                        <th>First name</th>
-                        <th>Middle name</th>
-                        <th>Last name</th>
-                        <th>Email</th>
-                        <th>Cohort</th>
+                        <th>Потребителско име (Фак. номер)</th>
+                        <th>Име</th>
+                        <th>Презиме</th>
+                        <th>Фамилия</th>
+                        <th>Имейл</th>
+                        <th>Кохорт</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,15 +33,21 @@
                     <ng-container *ngTemplateOutlet="dataCols; context: { students: selectedCohort.allStudents }"></ng-container>
 
                     <!-- Students that will be added -->
-                    <ng-container class="removed-student" *ngTemplateOutlet="dataCols; context: { students: selectedCohort.studentsToAddToCohort, class: 'added-student' }"></ng-container>
+                    <ng-container *ngTemplateOutlet="dataCols; context: { students: selectedCohort.studentsToAddToCohort, class: 'added-student' }"></ng-container>
 
                     <!-- Students that will be removed -->
-                    <ng-container class="removed-student" *ngTemplateOutlet="dataCols; context: { students: selectedCohort.studentsToRemoveFromCohort, class: 'removed-student' }"></ng-container>
+                    <ng-container *ngTemplateOutlet="dataCols; context: { students: selectedCohort.studentsToRemoveFromCohort, class: 'removed-student' }"></ng-container>
                 </tbody>
             </table>
         </div>
    }
+
+
 }
+<div class="btn-container">
+    <a class="btn-revert" (click)="revertChanges()">Върни промените</a>
+    <a class="btn-update" (click)="updateCohorts()">Удобри</a>
+</div>
 
 <ng-template #dataCols let-students="students" let-class="class">
     @for (studentInfo of students; track selectedCohort.cohortId)
