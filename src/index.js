@@ -211,6 +211,8 @@ app.post('/api/User/discord-info', (req, res) => {
   const facultyNumber = req.body.faculty_number;
   const discordID = decryptFromURLSafe(req.body.discord_id,secretKey);
   const guildID  = decryptFromURLSafe(req.body.guild_id,secretKey);
+  const degree = req.body.degree;
+  const major = req.body.major;
 
    // Use .then to handle the asynchronous operation
    getGuildById(guildID, client)
@@ -222,6 +224,8 @@ app.post('/api/User/discord-info', (req, res) => {
        const username = `${firstName} ${lastName}`;
      
       //  const member = myguild.members.cache.get(discordID);
+
+      
 
       getUser(discordID,myguild).then(member=>{
         setName(discordID,username,myguild);
