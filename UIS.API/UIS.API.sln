@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UIS.Services", "UIS.Service
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UIS.DAL", "UIS.DAL\UIS.DAL.csproj", "{2CB7BE54-99A6-462B-8A90-69B6586C07DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIS.DATA", "UIS.DATA\UIS.DATA.csproj", "{F0D07AE3-0EA3-4847-98C1-49E554C9A9C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UIS.DATA", "UIS.DATA\UIS.DATA.csproj", "{F0D07AE3-0EA3-4847-98C1-49E554C9A9C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIS.Services.Tests", "UIS.Services.Tests\UIS.Services.Tests.csproj", "{9A1F2A4C-DB9E-4E4B-817E-1BA935BE634F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{F0D07AE3-0EA3-4847-98C1-49E554C9A9C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0D07AE3-0EA3-4847-98C1-49E554C9A9C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0D07AE3-0EA3-4847-98C1-49E554C9A9C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A1F2A4C-DB9E-4E4B-817E-1BA935BE634F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A1F2A4C-DB9E-4E4B-817E-1BA935BE634F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A1F2A4C-DB9E-4E4B-817E-1BA935BE634F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A1F2A4C-DB9E-4E4B-817E-1BA935BE634F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
