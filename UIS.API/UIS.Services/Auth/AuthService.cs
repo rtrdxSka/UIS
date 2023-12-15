@@ -5,6 +5,20 @@ namespace UIS.Services.Auth
 {
     public class AuthService : IAuthService
     {
+        
+        private readonly HttpClient _client;
+
+        public AuthService(HttpClient client)
+        {
+            _client = client;
+        }
+        
+        private readonly HttpMessageHandler _httpMessageHandler;
+
+        public AuthService(HttpMessageHandler httpMessageHandler)
+        {
+            _httpMessageHandler = httpMessageHandler;
+        }
         public async Task<HttpResponseMessage> GetTokenAsync(HttpClient client, string code)
         {
             // Creates the POST request body for getting the token from moodle
