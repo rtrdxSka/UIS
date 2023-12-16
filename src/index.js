@@ -256,7 +256,6 @@ async function removeBachelorRoles(discordID,myguild){
           member.roles.remove(element);
           console.log(`Removed bachelor role ${element.name}`);
         }
-
       }
     })
 

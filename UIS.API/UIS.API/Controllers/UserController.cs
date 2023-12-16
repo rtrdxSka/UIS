@@ -103,7 +103,7 @@ th     { background:#eee; }
         </thead>
         <tbody><tr>
             <td><strong>kmitev@tu-sofia.bg</strong></td>
-            <td>Магистър</td>
+            <td>Магистър</td> 
             <td>3</td>
             <td>ФПМИ</td>
             <td>471221041</td>
