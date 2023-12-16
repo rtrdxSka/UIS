@@ -22,11 +22,25 @@ const client = new Client({
   ],
 });
 
-const roleNumber = {
-  "First Course" : 1,
-  "Second Course" : 2,
-  "Third Course" : 3,
-  "Fourth Course" : 4
+const roleNumberBachelor = {
+  "Първи Курс - Бакалавър" : 1,
+  "Втори Курс - Бакалавър" : 2,
+  "Трети Курс - Бакалавър" : 3,
+  "Четвърти Курс - Бакалавър" : 4
+}
+
+const bachelorRoles = {
+  "1" : "Първи Курс - Бакалавър",
+  "2" : "Втори Курс - Бакалавър",
+  "3" : "Трети Курс - Бакалавър",
+  "4" :"Четвърти Курс - Бакалавър"
+}
+
+const masterRoles = {
+  "1" : "Първи Курс - Магистър",
+  "2" : "Втори Курс - Магистър",
+  "3" : "Трети Курс - Магистър",
+  "4" :"Четвърти Курс - Магистър"
 }
 
 const commands = [
@@ -217,17 +231,35 @@ async function getUser(discordID,myguild){
 }
 
 async function removeRoles(discordID,role,myguild){
-  const roleAsNumber = roleNumber[role];
+  const roleAsNumber = roleNumberBachelor[role];
   myguild.members.fetch(discordID)
   .then(member=>{
     const allRoles = member.roles.cache;
     allRoles.forEach(element => {
-      const currentRole = roleNumber[element.name];
+      const currentRole = roleNumberBachelor[element.name];
       if(roleAsNumber < currentRole){
         member.roles.remove(element)
         console.log(`Role ${element.name} removed for ${member.user.tag}`);
       }
     });
+  })
+}
+
+async function removeBachelorRoles(discordID,myguild){
+  myguild.members.fetch(discordID)
+  .then(member=>{
+    const allRoles = member.roles.cache;
+
+    allRoles.forEach(element=>{
+      for (const [key, value] of Object.entries(bachelorRoles)) {
+        if (element.name === value){
+          member.roles.remove(element);
+          console.log(`Removed bachelor role ${element.name}`);
+        }
+
+      }
+    })
+
   })
 }
 
@@ -242,7 +274,7 @@ app.post('/api/User/discord-info', (req, res) => {
   const guildID  = decryptFromURLSafe(req.body.guild_id,secretKey);
   const degree = req.body.degree;
   const major = req.body.major;
-
+  const username = `${firstName} ${lastName} (${facultyNumber}. курс)`;
    // Use .then to handle the asynchronous operation
    getGuildById(guildID, client)
    .then(myguild => {
@@ -250,15 +282,12 @@ app.post('/api/User/discord-info', (req, res) => {
      if (myguild) {
        res.status(200).json({ success: true });
 
-
-       const username = `${firstName} ${lastName}`;
+       
      
       //  const member = myguild.members.cache.get(discordID);
 
-      
-
       getUser(discordID,myguild).then(member=>{
-        setName(discordID,username,myguild);
+        
 
         try {
           facultyDB(major).then(name_1=>{
@@ -269,31 +298,24 @@ app.post('/api/User/discord-info', (req, res) => {
               member.roles.remove(roles); // Remove all roles
               console.log('Major and server do not match');
             }else{
-              if (facultyNumber === "1") {
-                getCourseRole("First Course",myguild).then(role =>{
+              setName(discordID,username,myguild);
+              if(degree === "Бакалавър"){
+                const role = bachelorRoles[facultyNumber];
+               getCourseRole(role,myguild).then(role =>{
                 setRole(role,discordID,member,myguild);
               }) 
-               removeRoles(discordID,"First Course",myguild)
-      
-      
-             } else if (facultyNumber === "2"){
-              getCourseRole("Second Course",myguild).then(role =>{
-                setRole(role,discordID,member,myguild);
+
+               removeRoles(discordID,role,myguild)
+
+              }else if(degree === "Магистър"){
+
+                const role = masterRoles[facultyNumber];
+                getCourseRole(role,myguild).then(role =>{
+                  setRole(role,discordID,member,myguild);
               })
-              removeRoles(discordID,"Second Course",myguild)
-               
-             } else if (facultyNumber === "3"){
-      
-              getCourseRole("Third Course",myguild).then(role =>{
-                setRole(role,discordID,member,myguild);
-              })
-              removeRoles(discordID,"Third Course",myguild)
-             } else if (facultyNumber === "4"){
-               getCourseRole("Fourth Course",myguild).then(role =>{
-                setRole(role,discordID,member,myguild);
-               })
-               removeRoles(discordID,"Fourth Course",myguild)
-             }
+              removeBachelorRoles(discordID,myguild);
+              
+            }
             }
           })
          }catch(error){
