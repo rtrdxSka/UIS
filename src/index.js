@@ -149,6 +149,35 @@ function setName(discordID,username,guild){
 
 }
 
+async function facultyDB(faculty) {
+  const connection = mysql.createConnection({
+    host: '127.0.0.1',
+    port: 4300, // Port should be a number, not a string
+    user: 'root',
+    password: 'Admin123!',
+    database: 'uis_student'
+  });
+
+  // Return a new Promise
+  return new Promise((resolve, reject) => {
+    connection.connect();
+
+    connection.query(
+      'SELECT Major FROM guilddata WHERE guildName = ?',
+      [faculty],
+      (error, results) => {
+        connection.end(); // Make sure to end the connection after the query
+
+        if (error) {
+          reject(error); // Reject the Promise if there is an error
+        } else {
+          resolve(results); // Resolve the Promise with the results
+        }
+      }
+    );
+  });
+}
+
 
 const app = express();
 const PORT = 4200;
@@ -221,6 +250,7 @@ app.post('/api/User/discord-info', (req, res) => {
      if (myguild) {
        res.status(200).json({ success: true });
 
+
        const username = `${firstName} ${lastName}`;
      
       //  const member = myguild.members.cache.get(discordID);
@@ -229,37 +259,50 @@ app.post('/api/User/discord-info', (req, res) => {
 
       getUser(discordID,myguild).then(member=>{
         setName(discordID,username,myguild);
+
+        try {
+          facultyDB(major).then(name_1=>{
+            console.log(`I am here and dbresult is ${name_1[0].Major}`)
+            if(name_1[0].Major != myguild.name){
+              console.log(`My guild name is: ${myguild.name}`)
+              let roles = member.roles.cache.filter(r => r.id !== myguild.id); // Get all roles except @everyone
+              member.roles.remove(roles); // Remove all roles
+              console.log('Major and server do not match');
+            }else{
+              if (facultyNumber === "1") {
+                getCourseRole("First Course",myguild).then(role =>{
+                setRole(role,discordID,member,myguild);
+              }) 
+               removeRoles(discordID,"First Course",myguild)
+      
+      
+             } else if (facultyNumber === "2"){
+              getCourseRole("Second Course",myguild).then(role =>{
+                setRole(role,discordID,member,myguild);
+              })
+              removeRoles(discordID,"Second Course",myguild)
+               
+             } else if (facultyNumber === "3"){
+      
+              getCourseRole("Third Course",myguild).then(role =>{
+                setRole(role,discordID,member,myguild);
+              })
+              removeRoles(discordID,"Third Course",myguild)
+             } else if (facultyNumber === "4"){
+               getCourseRole("Fourth Course",myguild).then(role =>{
+                setRole(role,discordID,member,myguild);
+               })
+               removeRoles(discordID,"Fourth Course",myguild)
+             }
+            }
+          })
+         }catch(error){
+          console.error(error);
+         }
      
-       if (facultyNumber === "1") {
-          getCourseRole("First Course",myguild).then(role =>{
-          setRole(role,discordID,member,myguild);
-        }) 
-         removeRoles(discordID,"First Course",myguild)
-
-
-       } else if (facultyNumber === "2"){
-        getCourseRole("Second Course",myguild).then(role =>{
-          setRole(role,discordID,member,myguild);
-        })
-        removeRoles(discordID,"Second Course",myguild)
-         
-       } else if (facultyNumber === "3"){
-
-        getCourseRole("Third Course",myguild).then(role =>{
-          setRole(role,discordID,member,myguild);
-        })
-        removeRoles(discordID,"Third Course",myguild)
-       } else if (facultyNumber === "4"){
-         getCourseRole("Fourth Course",myguild).then(role =>{
-          setRole(role,discordID,member,myguild);
-         })
-         removeRoles(discordID,"Fourth Course",myguild)
-       }
+ 
       })
        
-     
-       
-     
        console.log('Received form data:', { firstName, lastName, facultyNumber});
      
       //  // Send a response if needed
