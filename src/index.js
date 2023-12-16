@@ -22,11 +22,25 @@ const client = new Client({
   ],
 });
 
-const roleNumber = {
-  "First Course" : 1,
-  "Second Course" : 2,
-  "Third Course" : 3,
-  "Fourth Course" : 4
+const roleNumberBachelor = {
+  "Първи Курс - Бакалавър" : 1,
+  "Втори Курс - Бакалавър" : 2,
+  "Трети Курс - Бакалавър" : 3,
+  "Четвърти Курс - Бакалавър" : 4
+}
+
+const bachelorRoles = {
+  "1" : "Първи Курс - Бакалавър",
+  "2" : "Втори Курс - Бакалавър",
+  "3" : "Трети Курс - Бакалавър",
+  "4" :"Четвърти Курс - Бакалавър"
+}
+
+const masterRoles = {
+  "1" : "Първи Курс - Магистър",
+  "2" : "Втори Курс - Магистър",
+  "3" : "Трети Курс - Магистър",
+  "4" :"Четвърти Курс - Магистър"
 }
 
 const commands = [
@@ -149,6 +163,35 @@ function setName(discordID,username,guild){
 
 }
 
+async function facultyDB(faculty) {
+  const connection = mysql.createConnection({
+    host: '127.0.0.1',
+    port: 4300, // Port should be a number, not a string
+    user: 'root',
+    password: 'Admin123!',
+    database: 'uis_student'
+  });
+
+  // Return a new Promise
+  return new Promise((resolve, reject) => {
+    connection.connect();
+
+    connection.query(
+      'SELECT Major FROM guilddata WHERE guildName = ?',
+      [faculty],
+      (error, results) => {
+        connection.end(); // Make sure to end the connection after the query
+
+        if (error) {
+          reject(error); // Reject the Promise if there is an error
+        } else {
+          resolve(results); // Resolve the Promise with the results
+        }
+      }
+    );
+  });
+}
+
 
 const app = express();
 const PORT = 4200;
@@ -188,17 +231,34 @@ async function getUser(discordID,myguild){
 }
 
 async function removeRoles(discordID,role,myguild){
-  const roleAsNumber = roleNumber[role];
+  const roleAsNumber = roleNumberBachelor[role];
   myguild.members.fetch(discordID)
   .then(member=>{
     const allRoles = member.roles.cache;
     allRoles.forEach(element => {
-      const currentRole = roleNumber[element.name];
+      const currentRole = roleNumberBachelor[element.name];
       if(roleAsNumber < currentRole){
         member.roles.remove(element)
         console.log(`Role ${element.name} removed for ${member.user.tag}`);
       }
     });
+  })
+}
+
+async function removeBachelorRoles(discordID,myguild){
+  myguild.members.fetch(discordID)
+  .then(member=>{
+    const allRoles = member.roles.cache;
+
+    allRoles.forEach(element=>{
+      for (const [key, value] of Object.entries(bachelorRoles)) {
+        if (element.name === value){
+          member.roles.remove(element);
+          console.log(`Removed bachelor role ${element.name}`);
+        }
+      }
+    })
+
   })
 }
 
@@ -211,7 +271,9 @@ app.post('/api/User/discord-info', (req, res) => {
   const facultyNumber = req.body.faculty_number;
   const discordID = decryptFromURLSafe(req.body.discord_id,secretKey);
   const guildID  = decryptFromURLSafe(req.body.guild_id,secretKey);
-
+  const degree = req.body.degree;
+  const major = req.body.major;
+  const username = `${firstName} ${lastName} (${facultyNumber}. курс)`;
    // Use .then to handle the asynchronous operation
    getGuildById(guildID, client)
    .then(myguild => {
@@ -219,43 +281,49 @@ app.post('/api/User/discord-info', (req, res) => {
      if (myguild) {
        res.status(200).json({ success: true });
 
-       const username = `${firstName} ${lastName}`;
+       
      
       //  const member = myguild.members.cache.get(discordID);
 
       getUser(discordID,myguild).then(member=>{
-        setName(discordID,username,myguild);
+        
+
+        try {
+          facultyDB(major).then(name_1=>{
+            console.log(`I am here and dbresult is ${name_1[0].Major}`)
+            if(name_1[0].Major != myguild.name){
+              console.log(`My guild name is: ${myguild.name}`)
+              let roles = member.roles.cache.filter(r => r.id !== myguild.id); // Get all roles except @everyone
+              member.roles.remove(roles); // Remove all roles
+              console.log('Major and server do not match');
+            }else{
+              setName(discordID,username,myguild);
+              if(degree === "Бакалавър"){
+                const role = bachelorRoles[facultyNumber];
+               getCourseRole(role,myguild).then(role =>{
+                setRole(role,discordID,member,myguild);
+              }) 
+
+               removeRoles(discordID,role,myguild)
+
+              }else if(degree === "Магистър"){
+
+                const role = masterRoles[facultyNumber];
+                getCourseRole(role,myguild).then(role =>{
+                  setRole(role,discordID,member,myguild);
+              })
+              removeBachelorRoles(discordID,myguild);
+              
+            }
+            }
+          })
+         }catch(error){
+          console.error(error);
+         }
      
-       if (facultyNumber === "1") {
-          getCourseRole("First Course",myguild).then(role =>{
-          setRole(role,discordID,member,myguild);
-        }) 
-         removeRoles(discordID,"First Course",myguild)
-
-
-       } else if (facultyNumber === "2"){
-        getCourseRole("Second Course",myguild).then(role =>{
-          setRole(role,discordID,member,myguild);
-        })
-        removeRoles(discordID,"Second Course",myguild)
-         
-       } else if (facultyNumber === "3"){
-
-        getCourseRole("Third Course",myguild).then(role =>{
-          setRole(role,discordID,member,myguild);
-        })
-        removeRoles(discordID,"Third Course",myguild)
-       } else if (facultyNumber === "4"){
-         getCourseRole("Fourth Course",myguild).then(role =>{
-          setRole(role,discordID,member,myguild);
-         })
-         removeRoles(discordID,"Fourth Course",myguild)
-       }
+ 
       })
        
-     
-       
-     
        console.log('Received form data:', { firstName, lastName, facultyNumber});
      
       //  // Send a response if needed
