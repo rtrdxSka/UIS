@@ -177,11 +177,12 @@ th     { background:#eee; }
                      {
                          new KeyValuePair<string, string>("firstname", userInfo.firstname),
                          new KeyValuePair<string, string>("lastname",userInfo.lastname),
-                         new KeyValuePair<string, string>("faculty_number","1"),
+                         new KeyValuePair<string, string>("course_number","1"),
                          new KeyValuePair<string, string>("discord_id",discord_id),
                          new KeyValuePair<string, string>("guild_id",guild_id),
                          new KeyValuePair<string, string>("degree", degree),
                          new KeyValuePair<string, string>("major", major),
+                         new KeyValuePair<string, string>("faculty_number", userInfo.username)
 
                      });
 
