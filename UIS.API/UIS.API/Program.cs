@@ -10,6 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<ICohortService, CohortService>();
 
+// Add repositories to the container.
+builder.Services.AddTransient<IStudentsRepository, StudentsRepository>();
+
+
 builder.Services.AddControllers();
 builder.Services.AddDbContext<UisDbContext>(options =>
         options.UseMySql(ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("uisStudent"))));

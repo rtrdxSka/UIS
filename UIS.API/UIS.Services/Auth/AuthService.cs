@@ -1,10 +1,28 @@
 ﻿using UIS.DAL.Constants;
 using UIS.DAL.DTO;
+using UIS.DATA;
 
 namespace UIS.Services.Auth
 {
     public class AuthService : IAuthService
     {
+        private readonly IStudentsRepository _studentsRepository;
+
+        public AuthService(IStudentsRepository studentsRepository)
+        {
+            _studentsRepository = studentsRepository;
+        }
+
+        public async Task AddStudentToDb(StudentInfo studentInfo)
+        {
+            if (studentInfo == null)
+            {
+                throw new Exception();
+            }
+
+            await _studentsRepository.AddAsync(studentInfo);
+            await _studentsRepository.SaveChangesAsync();
+        }
         public async Task<HttpResponseMessage> GetTokenAsync(HttpClient client, string code)
         {
             // Creates the POST request body for getting the token from moodle
