@@ -8,10 +8,10 @@ namespace UIS.DAL.DTO
         public string Email { get; set; }
 
         [Name("ОКС")]
-        public string EQD { get; set; }
+        public string Oks { get; set; }
 
         [Name("КУРС")]
-        public string Course { get; set; }
+        public int Course { get; set; }
 
         [Name("Факултет")]
         public string Faculty { get; set; }
@@ -20,12 +20,12 @@ namespace UIS.DAL.DTO
         public string FacultyNumber { get; set; }
 
         [Name("Група")]
-        public string Grouop { get; set; }
+        public string Group { get; set; }
 
         [Name("Имена")]
-        public string FullName { get; set; }
+        public string Names { get; set; }
 
-        [Name("Спец.")]
+        [Name("СПЕЦ.")]
         public string Specialty { get; set; }
     }
 }

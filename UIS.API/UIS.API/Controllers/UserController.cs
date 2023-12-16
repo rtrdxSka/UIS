@@ -64,9 +64,12 @@ namespace UIS.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetStudentDataFromUISAsync()
+        public async Task<ActionResult<List<UISStudentInfoDTO>>> GetStudentDataFromUISAsync()
         {
-            return Ok();
+            // Refactor to get filtered data when making requests to UIS
+            var studentInfo = _authService.GetMockedUISStudentInfo();
+
+            return Ok(studentInfo);
         }
     }
 }

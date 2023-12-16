@@ -123,8 +123,6 @@ namespace UIS.Services.Cohort
         }
         public List<StudentInfoDTO> ExtractStudentDataFromCSV(IFormFile csvFile)
         {
-            // Refactor to work with a csv that is received from POST request
-
             List<StudentInfoDTO> records = new List<StudentInfoDTO>();
 
             // Read the CSV file and map it to a list of StudentInfoDTO objects
@@ -133,7 +131,7 @@ namespace UIS.Services.Cohort
                 MissingFieldFound = null,
                 HeaderValidated = null, // Ignore missing headers
                 HasHeaderRecord = true, // The first row is the header
-                Encoding = Encoding.UTF8 // Set the encoding
+                Encoding = Encoding.UTF8, // Set the encoding
             };
 
             using (var reader = new StreamReader(csvFile.OpenReadStream()))
