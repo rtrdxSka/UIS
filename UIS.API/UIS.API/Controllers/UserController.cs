@@ -92,8 +92,8 @@ namespace UIS.API.Controllers
                                             </thead>
                                             <tbody><tr>
                                                 <td><strong>kmitev@tu-sofia.bg</strong></td>
-                                                <td>Магистър</td> 
-                                                <td>3</td>
+                                                <td>Бакалавър</td> 
+                                                <td>1</td>
                                                 <td>ФПМИ</td>
                                                 <td>471221041</td>
                                                 <td>78</td>
@@ -181,7 +181,7 @@ namespace UIS.API.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("DiscordSync")]
         public async Task<ActionResult<List<UISStudentInfoDTO>>> GetStudentDataFromUISAsync()
         {
             var studentInfo = _authService.GetMockedUISStudentInfo();
