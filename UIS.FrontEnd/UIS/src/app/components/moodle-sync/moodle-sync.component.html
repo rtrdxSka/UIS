@@ -32,11 +32,11 @@
                     <!-- All students from the cohort -->
                     <ng-container *ngTemplateOutlet="dataCols; context: { students: selectedCohort.allStudents }"></ng-container>
 
-                    <!-- Students that will be added -->
-                    <ng-container *ngTemplateOutlet="dataCols; context: { students: selectedCohort.studentsToAddToCohort, class: 'added-student' }"></ng-container>
-
                     <!-- Students that will be removed -->
                     <ng-container *ngTemplateOutlet="dataCols; context: { students: selectedCohort.studentsToRemoveFromCohort, class: 'removed-student' }"></ng-container>
+
+                     <!-- Students that will be added -->
+                     <ng-container *ngTemplateOutlet="dataCols; context: { students: selectedCohort.studentsToAddToCohort, class: 'added-student' }"></ng-container>
                 </tbody>
             </table>
         </div>
