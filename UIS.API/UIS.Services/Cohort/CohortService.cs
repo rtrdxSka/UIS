@@ -174,14 +174,7 @@ namespace UIS.Services.Cohort
             // Keeps a copy of the id of the students from moodle and removes a student from the list if he is present in the moodle CSV
             // If the list is not empty, the users inside are to be removed
             var trackStudentsToRemoveFromMoodle = studentsIdsFromMoodle.ToList();
-
-            List<StudentInfoDTO> allStudents = new List<StudentInfoDTO>();
-
-            foreach (var studentId in studentsIdsFromMoodle)
-            {
-                var student = await GetUserByIdAsync(client, studentId, jwt);
-                allStudents.Add(student);
-            }
+            var allStudentsIdsAfterRemove = studentsIdsFromMoodle.ToList();
 
             // Removes the students that are already in moodle from the lists of students from moodle and csv
             // If the student is in moodle but not in the csv -> delete student from the cohort
@@ -205,12 +198,21 @@ namespace UIS.Services.Cohort
             {
                 var student = await GetUserByIdAsync(client, moodleStudentId, jwt);
                 studentsToRemoveFromCohort.Add(student);
+                allStudentsIdsAfterRemove.Remove(moodleStudentId);
+            }
+
+            List<StudentInfoDTO> allStudentsAfterRemove = new List<StudentInfoDTO>();
+
+            foreach (var studentId in allStudentsIdsAfterRemove)
+            {
+                var student = await GetUserByIdAsync(client, studentId, jwt);
+                allStudentsAfterRemove.Add(student);
             }
 
             CohortUpdateDataDTO dataToUpdateMoodleDTO = new CohortUpdateDataDTO();
             dataToUpdateMoodleDTO.StudentsToRemoveFromCohort = studentsToRemoveFromCohort;
             dataToUpdateMoodleDTO.StudentsToAddToCohort = studentsFromCsv;
-            dataToUpdateMoodleDTO.AllStudents = allStudents;
+            dataToUpdateMoodleDTO.AllStudents = allStudentsAfterRemove;
             dataToUpdateMoodleDTO.CohortName = cohortName;
 
             // Returns the list of students for upload and remove
