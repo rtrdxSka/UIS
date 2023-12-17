@@ -170,7 +170,7 @@ namespace UIS.API.Controllers
                         }
 
                         if (userInfo != null)
-<<<<<<< HEAD
+
                  {
                      var content = new FormUrlEncodedContent(new[]
                      {
@@ -182,7 +182,7 @@ namespace UIS.API.Controllers
                          new KeyValuePair<string, string>("degree", degree),
                          new KeyValuePair<string, string>("major", major),
                          new KeyValuePair<string, string>("faculty_number", userInfo.username)
-=======             })
+           });
                         
                          
 
@@ -194,7 +194,7 @@ namespace UIS.API.Controllers
             }
             return BadRequest();
         }
-
+}
         [HttpGet]
         public async Task<ActionResult<List<UISStudentInfoDTO>>> GetStudentDataFromUISAsync()
         {
@@ -203,5 +203,6 @@ namespace UIS.API.Controllers
 
             return Ok(studentInfo);
         }
-    }
+    
+}
 }
