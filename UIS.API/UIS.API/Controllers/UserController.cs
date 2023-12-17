@@ -1,4 +1,4 @@
-﻿using UIS.Services.Auth;
+using UIS.Services.Auth;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using UIS.DAL.DTO;
@@ -192,7 +192,6 @@ th     { background:#eee; }
                  }
 
                  
-             }
 
          }
          return BadRequest();
