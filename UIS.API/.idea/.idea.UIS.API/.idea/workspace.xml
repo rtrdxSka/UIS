@@ -11,8 +11,6 @@
     <list default="true" id="b2854020-e6d8-4e2f-afcf-cc9115533f9d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../.env" beforeDir="false" afterPath="$PROJECT_DIR$/../.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.UIS.API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.UIS.API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIS.API/Controllers/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIS.API/Controllers/UserController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIS.Services/Auth/AuthService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIS.Services/Auth/AuthService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -129,7 +127,7 @@
       <workItem from="1702822882928" duration="308000" />
       <workItem from="1702826165580" duration="412000" />
       <workItem from="1702826616118" duration="678000" />
-      <workItem from="1702841331654" duration="2963000" />
+      <workItem from="1702841331654" duration="3602000" />
     </task>
     <task id="LOCAL-00001" summary="Adde a test">
       <option name="closed" value="true" />

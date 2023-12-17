@@ -97,7 +97,39 @@ client.on('interactionCreate', async (interaction) => {
         return response.json();
     })
     .then(data => {
-        console.log(data); // Process your data here
+      // Process your data here
+        for(let i = 0;i<data.length;i++ ) {
+          executeQuery(data[i].facultyNumber,interaction.guild.id).then(result=>{
+            if(result != ""){
+              const username = data[i].names.split(" ").slice(0,2).join(" ");
+              const degree = data[i].oks;
+              console.log(JSON.stringify(result))
+              for(let j=0;j<result.length;j++){
+                getGuildById(interaction.guild.id,client).then(myguild=>{
+                  setName(result[j].DiscordId,username,myguild);
+                if(degree === "Бакалавър"){
+                  const role = bachelorRoles[data[i].course];
+                 getCourseRole(role,myguild).then(role =>{
+                  setRole(role,result[j].DiscordId,myguild);
+                }) 
+  
+                 removeRoles(result[j].DiscordId,role,myguild)
+  
+                }else if(degree === "Магистър"){
+  
+                  const role = masterRoles[data[i].course];
+                  getCourseRole(role,myguild).then(role =>{
+                    setRole(role,result[j].DiscordId,myguild);
+                })
+                removeBachelorRoles(result[j].DiscordId,myguild);
+                
+              }
+                })
+              }
+            }
+          })
+        }
+        
     })
     .catch(error => {
         console.error('There has been a problem with your fetch operation:', error);
@@ -118,6 +150,48 @@ client.on('guildCreate', (guild) => {
 
 client.login(process.env.TOKEN);
 
+
+// Async function to execute the query with parameters
+// Function to execute the query with parameters using Promise
+function executeQuery(facultyNumber, guildId) {
+  return new Promise((resolve, reject) => {
+    // Create a connection to the database
+    const connection = mysql.createConnection({
+      host: 'localhost',
+      port: 3306, // Port should be a number, not a string
+      user: 'root',
+      password: 'admin',
+      database: 'uis_student'
+    });
+
+    // SQL query
+    const query = `
+      SELECT DiscordId 
+      FROM discorddata d 
+      INNER JOIN students s ON d.StudentId = s.Id 
+      WHERE s.Username = ? AND d.GuildId = ?;
+    `;
+
+    // Connect to the database
+    connection.connect(error => {
+      if (error) {
+        reject('An error occurred while connecting to the DB: ' + error);
+        return;
+      }
+      console.log('Connected to the database.');
+
+      // Execute the query with the provided parameters
+      connection.query(query, [facultyNumber, guildId], (error, results) => {
+        if (error) {
+          reject('An error occurred while executing the query: ' + error);
+        } else {
+          resolve(results);
+        }
+        connection.end();
+      });
+    });
+  });
+}
 // Encryption function
 function encryptToURLSafe(text, secretKey) {
   const iv = crypto.randomBytes(16);
@@ -142,7 +216,7 @@ function decryptFromURLSafe(encryptedURLSafe, secretKey) {
   return decrypted.toString();
 }
 
-function setRole(role,discordID,member,guild){
+function setRole(role,discordID,guild){
 // Fetch the member asynchronously
 guild.members.fetch(discordID)
 .then(member => {
@@ -426,7 +500,7 @@ app.post('/api/User/discord-info', (req, res) => {
         console.log(`Checker inside program ${checker}`)
         getUser(discordID,myguild).then(member=>{
           getCourseRole('authorized',myguild).then(role=>{
-            setRole(role,discordID,member,myguild);
+            setRole(role,discordID,myguild);
           })
 
           try {
@@ -442,7 +516,7 @@ app.post('/api/User/discord-info', (req, res) => {
                 if(degree === "Бакалавър"){
                   const role = bachelorRoles[courseNumber];
                  getCourseRole(role,myguild).then(role =>{
-                  setRole(role,discordID,member,myguild);
+                  setRole(role,discordID,myguild);
                 }) 
   
                  removeRoles(discordID,role,myguild)
@@ -451,7 +525,7 @@ app.post('/api/User/discord-info', (req, res) => {
   
                   const role = masterRoles[courseNumber];
                   getCourseRole(role,myguild).then(role =>{
-                    setRole(role,discordID,member,myguild);
+                    setRole(role,discordID,myguild);
                 })
                 removeBachelorRoles(discordID,myguild);
                 
