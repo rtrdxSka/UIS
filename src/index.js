@@ -49,6 +49,10 @@ const commands = [
     name: 'auth',
     description: 'Gives user an auth link to moodle',
   },
+  {
+    name: 'sync',
+    description: 'Syncs all users from the server'
+  }
 ];
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
@@ -84,9 +88,15 @@ client.on('interactionCreate', async (interaction) => {
   interaction.user.send(`http://localhost/local/oauth/login.php?client_id=ClientId1&response_type=code&discord_id=${encryptedDiscord}&guild_id=${encryptedGuild}`);
 
   return 0;
+  }else if (interaction.commandName === 'sync') {
+    
+
   }
 
 });
+
+
+
 
 client.on('guildCreate', (guild) => {
   // When the bot joins a new server, register commands for that server
