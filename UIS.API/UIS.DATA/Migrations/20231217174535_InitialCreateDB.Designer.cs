@@ -10,8 +10,8 @@ using UIS.DATA.Database;
 namespace UIS.DATA.Migrations
 {
     [DbContext(typeof(UisDbContext))]
-    [Migration("20231212145614_AddGuildMajorTable")]
-    partial class AddGuildMajorTable
+    [Migration("20231217174535_InitialCreateDB")]
+    partial class InitialCreateDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -69,18 +69,7 @@ namespace UIS.DATA.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("Course")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Faculty")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("FacultyNumber")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -89,10 +78,6 @@ namespace UIS.DATA.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Major")
                         .IsRequired()
                         .HasColumnType("longtext");
 
