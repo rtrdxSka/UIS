@@ -1,10 +1,16 @@
-<div>
+<h1>Университетска информационна система</h1>
+
+<div class="form-group">
     <form [formGroup]="csvForm" (ngSubmit)="getCohortsUpdateData()">
-        <input type="file" id="csvFile" (change)="onUploadFile($event)" formControlName="csvFile">
-    
-        <button type="submit">
-            Изпрати
-        </button>
+        <div>
+            <input type="file" id="csvFile" (change)="onUploadFile($event)" formControlName="csvFile">
+
+            <button type="submit">
+                Изпрати
+            </button>
+        </div>
+
+        <span>Прикачете файл с обновената информация за студентите</span>
     </form>
 </div>
 
@@ -20,7 +26,7 @@
             <table class="user-table">
                 <thead>
                     <tr>
-                        <th>Потребителско име (Фак. номер)</th>
+                        <th>Потребителско име</th>
                         <th>Име</th>
                         <th>Презиме</th>
                         <th>Фамилия</th>
@@ -41,12 +47,11 @@
         </div>
    }
 
-
+   <div class="btn-container">
+        <a class="btn-revert" (click)="revertChanges()">Върни промените</a>
+        <a class="btn-update" (click)="updateCohorts()">Удобри</a>
+    </div>
 }
-<div class="btn-container">
-    <a class="btn-revert" (click)="revertChanges()">Върни промените</a>
-    <a class="btn-update" (click)="updateCohorts()">Удобри</a>
-</div>
 
 <ng-template #dataCols let-students="students" let-class="class">
     @for (studentInfo of students; track selectedCohort.cohortId)
