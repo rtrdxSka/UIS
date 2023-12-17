@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const { Client, IntentsBitField, GuildMember } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v10');
+const { rejects } = require('assert');
 
 // const secretKey = crypto.randomBytes(32);
 
@@ -48,6 +49,10 @@ const commands = [
     name: 'auth',
     description: 'Gives user an auth link to moodle',
   },
+  {
+    name: 'sync',
+    description: 'Syncs all users from the server'
+  }
 ];
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
@@ -83,9 +88,15 @@ client.on('interactionCreate', async (interaction) => {
   interaction.user.send(`http://localhost/local/oauth/login.php?client_id=ClientId1&response_type=code&discord_id=${encryptedDiscord}&guild_id=${encryptedGuild}`);
 
   return 0;
+  }else if (interaction.commandName === 'sync') {
+    
+
   }
 
 });
+
+
+
 
 client.on('guildCreate', (guild) => {
   // When the bot joins a new server, register commands for that server
@@ -192,6 +203,37 @@ async function facultyDB(faculty) {
   });
 }
 
+async function discrordDBCheck(facultyNumber){
+  const connection = mysql.createConnection({
+    host: '127.0.0.1',
+    port: 4300, // Port should be a number, not a string
+    user: 'root',
+    password: 'Admin123!',
+    database: 'uis_student'
+  });
+
+  return new Promise((resolve, reject) =>{
+    connection.connect();
+
+    connection.query(
+      'SELECT Id FROM students WHERE FacultyNumber = ?',
+      [facultyNumber],
+      (error, results) =>{
+        connection.end();
+  
+        if(error){
+          reject(error);
+        }else{
+          resolve(results);
+        }
+      }
+  
+    )
+
+  })
+
+}
+
 
 const app = express();
 const PORT = 4200;
@@ -262,18 +304,48 @@ async function removeBachelorRoles(discordID,myguild){
   })
 }
 
+// Function to insert data into discorddata table
+function insertIntoDiscordData(discordData) {
+  const connection = mysql.createConnection({
+    host: '127.0.0.1',
+    port: 4300, // Port should be a number, not a string
+    user: 'root',
+    password: 'Admin123!',
+    database: 'uis_student'
+  });
+
+  const sql = 'INSERT INTO discorddata SET ?';
+  connection.query(sql, discordData, (error, results) => {
+    if (error) {
+      console.error('Error occurred:', error);
+      return;
+    }
+    console.log('Insert successful:', results);
+  });
+}
 
 // Your route handling
 app.post('/api/User/discord-info', (req, res) => {
-
   const firstName = req.body.firstname;
   const lastName = req.body.lastname;
+  const courseNumber = req.body.course_number;
   const facultyNumber = req.body.faculty_number;
   const discordID = decryptFromURLSafe(req.body.discord_id,secretKey);
   const guildID  = decryptFromURLSafe(req.body.guild_id,secretKey);
   const degree = req.body.degree;
   const major = req.body.major;
-  const username = `${firstName} ${lastName} (${facultyNumber}. курс)`;
+  const username = `${firstName} ${lastName} (${courseNumber}. курс)`;
+
+discrordDBCheck(facultyNumber).then(resultDB=>{
+if (resultDB != ""){
+  DBdata = {
+    "Id": null,
+    "StudentId": resultDB[0].Id,
+    "DiscordId" : discordID,
+    "GuildId": guildID
+  };
+  insertIntoDiscordData(DBdata);
+
    // Use .then to handle the asynchronous operation
    getGuildById(guildID, client)
    .then(myguild => {
@@ -299,7 +371,7 @@ app.post('/api/User/discord-info', (req, res) => {
             }else{
               setName(discordID,username,myguild);
               if(degree === "Бакалавър"){
-                const role = bachelorRoles[facultyNumber];
+                const role = bachelorRoles[courseNumber];
                getCourseRole(role,myguild).then(role =>{
                 setRole(role,discordID,member,myguild);
               }) 
@@ -308,7 +380,7 @@ app.post('/api/User/discord-info', (req, res) => {
 
               }else if(degree === "Магистър"){
 
-                const role = masterRoles[facultyNumber];
+                const role = masterRoles[courseNumber];
                 getCourseRole(role,myguild).then(role =>{
                   setRole(role,discordID,member,myguild);
               })
@@ -324,7 +396,7 @@ app.post('/api/User/discord-info', (req, res) => {
  
       })
        
-       console.log('Received form data:', { firstName, lastName, facultyNumber});
+       console.log('Received form data:', { firstName, lastName, facultyNumber: courseNumber});
      
       //  // Send a response if needed
       //  res.send('Data received successfully!');
@@ -337,6 +409,10 @@ app.post('/api/User/discord-info', (req, res) => {
      console.error(`Error in route handler: ${error.message}`);
      res.status(500).json({ success: false, error: 'Internal Server Error' });
    });
+}
+})
+
+
 });
 
 app.listen(PORT, () => {
