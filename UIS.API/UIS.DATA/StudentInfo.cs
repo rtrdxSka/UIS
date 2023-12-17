@@ -13,10 +13,6 @@ namespace UIS.DATA
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public string Email { get; set; } = null!;
-        public string FacultyNumber { get; set; } = null!;
-        public string Faculty { get; set; } = null!;
-        public string Major { get; set; } = null!;
-        public int Course { get; set; }
         public ICollection<DiscordData> DiscordData { get; set; } = null!;
     }
 }
