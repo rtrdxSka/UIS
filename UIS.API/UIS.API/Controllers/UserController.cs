@@ -4,14 +4,12 @@ using System.Text.Json;
 using UIS.DAL.DTO;
 using HtmlAgilityPack;
 
-
 namespace UIS.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
-
         private readonly IAuthService _authService;
 
         public UserController(IAuthService authService)
@@ -22,29 +20,20 @@ namespace UIS.API.Controllers
         [HttpGet("discord-info")]
         public async Task<IActionResult> HandleMoodleAuthCallbackAsync(string code, string discord_id, string guild_id)
         {
-
             using (var client = new HttpClient())
             {
-                // Sends request to moodle for the authentication token
                 var AuthResponse = await _authService.GetTokenAsync(client, code);
-
                 if (AuthResponse.IsSuccessStatusCode)
                 {
                     var AuthResponseContent = await AuthResponse.Content.ReadAsStringAsync();
-
                     MoodleTokenDTO moodleToken = JsonSerializer.Deserialize<MoodleTokenDTO>(AuthResponseContent);
-
-                    // Sends request to moodle for the authenticated user's info
                     var UserInfoResponse = await _authService.GetUserInfoAsync(client, moodleToken);
-
-
 
                     if (UserInfoResponse.IsSuccessStatusCode)
                     {
-                        // Deserialise the user info
                         var UserInfoResponseContent = await UserInfoResponse.Content.ReadAsStringAsync();
                         UserInfoDTO userInfo = JsonSerializer.Deserialize<UserInfoDTO>(UserInfoResponseContent);
-
+                        
                         string htmlContent = @"
                                     <!DOCTYPE html>
                                     <html class=' abtuvgbdw idc0_343' lang='bg'><head>
@@ -168,41 +157,35 @@ namespace UIS.API.Controllers
                         {
                             Console.WriteLine("Node not found.");
                         }
-
-                        if (userInfo != null)
-
-                 {
-                     var content = new FormUrlEncodedContent(new[]
-                     {
-                         new KeyValuePair<string, string>("firstname", userInfo.firstname),
-                         new KeyValuePair<string, string>("lastname",userInfo.lastname),
-                         new KeyValuePair<string, string>("course_number","1"),
-                         new KeyValuePair<string, string>("discord_id",discord_id),
-                         new KeyValuePair<string, string>("guild_id",guild_id),
-                         new KeyValuePair<string, string>("degree", degree),
-                         new KeyValuePair<string, string>("major", major),
-                         new KeyValuePair<string, string>("faculty_number", userInfo.username)
-           });
                         
-                         
+                        if (userInfo != null)
+                        {
+                            var content = new FormUrlEncodedContent(new[]
+                            {
+                                new KeyValuePair<string, string>("firstname", userInfo.firstname),
+                                new KeyValuePair<string, string>("lastname", userInfo.lastname),
+                                new KeyValuePair<string, string>("course_number", "1"),
+                                new KeyValuePair<string, string>("discord_id", discord_id),
+                                new KeyValuePair<string, string>("guild_id", guild_id),
+                                new KeyValuePair<string, string>("degree", degree),
+                                new KeyValuePair<string, string>("major", major),
+                                new KeyValuePair<string, string>("faculty_number", userInfo.username)
+                            });
 
                             await client.PostAsync("http://localhost:4200/api/User/discord-info", content);
-
-                            return Redirect("https://www.google.com/")                        
+                            return Redirect("https://www.google.com/");
+                        }
                     }
                 }
+                return BadRequest();
             }
-            return BadRequest();
         }
-}
+
         [HttpGet]
         public async Task<ActionResult<List<UISStudentInfoDTO>>> GetStudentDataFromUISAsync()
         {
-            // Refactor to get filtered data when making requests to UIS
             var studentInfo = _authService.GetMockedUISStudentInfo();
-
             return Ok(studentInfo);
         }
-    
-}
+    }
 }

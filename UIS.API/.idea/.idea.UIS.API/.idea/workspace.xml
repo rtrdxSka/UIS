@@ -9,8 +9,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2854020-e6d8-4e2f-afcf-cc9115533f9d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../.env" beforeDir="false" afterPath="$PROJECT_DIR$/../.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.UIS.API/.idea/shelf/Uncommitted_changes_before_rebase__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.UIS.API/.idea/shelf/Uncommitted_changes_before_rebase__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.UIS.API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.UIS.API/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UIS.API/Controllers/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIS.API/Controllers/UserController.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -123,6 +124,7 @@
       <workItem from="1702681104383" duration="1722000" />
       <workItem from="1702725546344" duration="5669000" />
       <workItem from="1702820409835" duration="668000" />
+      <workItem from="1702822882928" duration="308000" />
     </task>
     <task id="LOCAL-00001" summary="Adde a test">
       <option name="closed" value="true" />
