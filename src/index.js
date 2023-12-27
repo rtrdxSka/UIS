@@ -120,6 +120,7 @@ client.on('interactionCreate', async (interaction) => {
                   const role = masterRoles[data[i].course];
                   getCourseRole(role,myguild).then(role =>{
                     setRole(role,result[j].DiscordId,myguild);
+                    
                 })
                 removeBachelorRoles(result[j].DiscordId,myguild);
                 
