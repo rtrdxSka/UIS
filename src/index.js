@@ -141,8 +141,6 @@ client.on('interactionCreate', async (interaction) => {
 });
 
 
-
-
 client.on('guildCreate', (guild) => {
   // When the bot joins a new server, register commands for that server
   registerCommands(guild.id);
