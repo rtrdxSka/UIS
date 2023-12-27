@@ -9,9 +9,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2854020-e6d8-4e2f-afcf-cc9115533f9d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.UIS.API/.idea/shelf/Uncommitted_changes_before_rebase__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.UIS.API/.idea/shelf/Uncommitted_changes_before_rebase__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.env" beforeDir="false" afterPath="$PROJECT_DIR$/../.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.UIS.API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.UIS.API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIS.API/Controllers/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIS.API/Controllers/UserController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +63,7 @@
     &quot;.NET Launch Settings Profile.UIS.API.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;67-db-check-discord-user&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;79-sync-command-adn-db-intergration&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -125,6 +125,9 @@
       <workItem from="1702725546344" duration="5669000" />
       <workItem from="1702820409835" duration="668000" />
       <workItem from="1702822882928" duration="308000" />
+      <workItem from="1702826165580" duration="412000" />
+      <workItem from="1702826616118" duration="678000" />
+      <workItem from="1702841331654" duration="3602000" />
     </task>
     <task id="LOCAL-00001" summary="Adde a test">
       <option name="closed" value="true" />
@@ -141,6 +144,17 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Adde a test" />
