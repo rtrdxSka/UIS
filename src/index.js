@@ -33,16 +33,28 @@ client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === 'auth') {
+    await interaction.deferReply();
 
     const encryptedDiscord = encryptToURLSafe(interaction.user.id, secretKey);
     const encryptedGuild = encryptToURLSafe(interaction.guild.id, secretKey)
 
   interaction.user.send(`http://localhost/local/oauth/login.php?client_id=ClientId1&response_type=code&discord_id=${encryptedDiscord}&guild_id=${encryptedGuild}`);
+  await interaction.editReply("Изпратен е линк за авторизация.");
 
   return 0;
   }else if (interaction.commandName === 'sync') {
    
-    syncUsers(interaction,client,bachelorRoles,masterRoles);
+    await interaction.deferReply();
+
+    const adminRole = interaction.guild.roles.cache.find(role => role.name == "Administrator");
+    if (interaction.member.roles.cache.has(adminRole.id)){
+       await syncUsers(interaction,client,bachelorRoles,masterRoles);
+       await interaction.editReply("Успешна синхронизация!");
+    }
+    else {
+      await interaction.editReply("/sync: Нямате права за тази команда!");
+    }
+    
   }
 
 });
@@ -105,32 +117,42 @@ app.post('/api/User/discord-info', (req, res) => {
               }else{
                 setName(discordID,username,myguild);
                discrordDBCheck(facultyNumber).then(result =>{
-                  const data = {
-                    Id:null,
-                    StudentId: result[0].Id,
-                    DiscordId: discordID,
-                    GuildId :guildID
-                  };
-                  insertIntoDiscordData(data);
+                  if (result!=""){
+                    const data = {
+                      Id:null,
+                      StudentId: result[0].Id,
+                      DiscordId: discordID,
+                      GuildId :guildID
+                    };
+                    insertIntoDiscordData(data);
+
+                    if(degree === "Бакалавър"){
+                      const role = bachelorRoles[courseNumber];
+                      getCourseRole(role,myguild).then(role =>{
+                        setRole(role,discordID,myguild);
+                    }) 
+      
+                    removeRoles(discordID,role,myguild)
+      
+                    }else if(degree === "Магистър"){
+      
+                      const role = masterRoles[courseNumber];
+                      getCourseRole(role,myguild).then(role =>{
+                        setRole(role,discordID,myguild);
+                    })
+                   removeBachelorRoles(discordID,myguild);
+                    
+                  }
+                  }
+                  else{
+                    client.users.fetch(discordID).then(user =>{
+                      user.send("Проблем с аутентикацията. Моля, обърнете се към администратор на сървъра.");
+                      
+                    })
+                  }
                   
                 })
-                if(degree === "Бакалавър"){
-                  const role = bachelorRoles[courseNumber];
-                  getCourseRole(role,myguild).then(role =>{
-                    setRole(role,discordID,myguild);
-                }) 
-  
-                removeRoles(discordID,role,myguild)
-  
-                }else if(degree === "Магистър"){
-  
-                  const role = masterRoles[courseNumber];
-                  getCourseRole(role,myguild).then(role =>{
-                    setRole(role,discordID,myguild);
-                })
-               removeBachelorRoles(discordID,myguild);
-                
-              }
+               
               }
             })
            }catch(error){
@@ -145,7 +167,6 @@ app.post('/api/User/discord-info', (req, res) => {
      })
       //  const member = myguild.members.cache.get(discordID);
 
- 
        
        console.log('Received form data:', { firstName, lastName, facultyNumber: courseNumber});
      

@@ -19,7 +19,7 @@ const roleNumberBachelor = {
   "Втори Курс - Бакалавър" : 2,
   "Трети Курс - Бакалавър" : 3,
   "Четвърти Курс - Бакалавър" : 4,
-  "authorized" : 99
+  "authorized" : 0
 }
 
 const bachelorRoles = {
