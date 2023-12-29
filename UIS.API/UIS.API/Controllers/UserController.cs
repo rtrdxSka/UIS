@@ -98,7 +98,7 @@ namespace UIS.API.Controllers
                                                 <td>471221041</td>
                                                 <td>78</td>
                                                 <td>КРИСТИЯН МИХАЙЛОВ МИТЕВ</td>
-                                                <td>ИСН</td>
+                                                <td>ПМИ</td>
                                                 <td>$12Действащ</td>
                                             </tr>
                                             </tbody></table>

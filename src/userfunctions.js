@@ -1,5 +1,5 @@
 const {executeQuery} = require('./database.js');
-const {roleNumberBachelor} = require('./utilites.js');
+const {delay, roleNumberBachelor, bachelorRoles} = require('./utilites.js');
 
 async function syncUsers(interaction,client,bachelorRoles,masterRoles){
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -15,7 +15,8 @@ async function syncUsers(interaction,client,bachelorRoles,masterRoles){
       for(let i = 0;i<data.length;i++ ) {
         executeQuery(data[i].facultyNumber,interaction.guild.id).then(result=>{
           if(result != ""){
-            const username = data[i].names.split(" ").slice(0,2).join(" ");
+            const names = data[i].names.split(" ");
+            const username = `${names[0]} ${names[2]} (${data[i].course}. курс)`;
             const degree = data[i].oks;
             console.log(JSON.stringify(result))
             for(let j=0;j<result.length;j++){
@@ -43,6 +44,7 @@ async function syncUsers(interaction,client,bachelorRoles,masterRoles){
             }
           }
         })
+        .then(() => delay(1000));
       }
       
   })
