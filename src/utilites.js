@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 
-
 const commands = [
   {
     name: 'auth',
@@ -19,7 +18,8 @@ const roleNumberBachelor = {
   "Втори Курс - Бакалавър" : 2,
   "Трети Курс - Бакалавър" : 3,
   "Четвърти Курс - Бакалавър" : 4,
-  "authorized" : 0
+  "authorized" : 0,
+  "Administrator" : 0
 }
 
 const bachelorRoles = {
@@ -59,7 +59,7 @@ function decryptFromURLSafe(encryptedURLSafe, secretKey) {
   return decrypted.toString();
 }
 
-const registerCommands = async (guildId) => {
+const registerCommands = async (guildId, rest, Routes) => {
   try {
     console.log(`Registering commands for guild: ${guildId}`);
     await rest.put(
@@ -71,5 +71,7 @@ const registerCommands = async (guildId) => {
     console.error(`Error registering commands for guild ${guildId}:`, error);
   }
 };
-
-module.exports = {registerCommands,decryptFromURLSafe,encryptToURLSafe,masterRoles,bachelorRoles,roleNumberBachelor,commands};
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+module.exports = {registerCommands,decryptFromURLSafe,encryptToURLSafe,delay,masterRoles,bachelorRoles,roleNumberBachelor,commands};

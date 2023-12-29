@@ -94,29 +94,24 @@ async function discrordDBCheck(facultyNumber){
 
 }
 
-function checkStudentAuth(discordID){
+function checkStudentAuth(discordId, guildId){
   const connection = createConnection();
 
   return new Promise((resolve, reject) =>{
     connection.connect();
-
-    connection.query(
-      'Select GuildId from discorddata where DiscordId = ?',
-      [discordID],
-      (error, results) =>{
-        connection.end();
-  
-        if(error){
-          reject(error);
-        }else{
-          resolve(results);
-        }
+    const sql = 'Select StudentId from discorddata where DiscordId = ? and GuildId = ?';
+    connection.query(sql, [discordId, guildId], (error, results) => {
+      if (error) {
+        reject('An error occurred while executing the query: ' + error);
+      } else {
+        resolve(results);
       }
-  
+      connection.end();
+    });   
+      }
     )
+  }
 
-  })
-}
 
 // Function to insert data into discorddata table
 function insertIntoDiscordData(discordData) {

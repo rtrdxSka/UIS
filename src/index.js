@@ -61,7 +61,7 @@ client.on('interactionCreate', async (interaction) => {
 
 client.on('guildCreate', (guild) => {
   // When the bot joins a new server, register commands for that server
-  registerCommands(guild.id);
+  registerCommands(guild.id, rest, Routes);
 });
 
 client.login(process.env.TOKEN);
@@ -102,29 +102,35 @@ app.post('/api/User/discord-info', (req, res) => {
       if(checker){
         console.log(`Checker inside program ${checker}`)
         getUser(discordID,myguild).then(member=>{
-          getCourseRole('authorized',myguild).then(role=>{
-            setRole(role,discordID,myguild);
-          })
+          
 
           try {
            facultyDB(major).then(name_1=>{
               console.log(`I am here and dbresult is ${name_1[0].Major}`)
               if(name_1[0].Major != myguild.name){
                 console.log(`My guild name is: ${myguild.name}`)
-                let roles = member.roles.cache.filter(r => r.id !== myguild.id); // Get all roles except @everyone
+                let roles = member.roles.cache.filter(r => r.id !== myguild.id && r.name != "Administrator"); // Get all roles except @everyone and Administrator
                 member.roles.remove(roles); // Remove all roles
                 console.log('Major and server do not match');
               }else{
+                getCourseRole('authorized',myguild).then(role=>{
+                  setRole(role,discordID,myguild);
+                })
                 setName(discordID,username,myguild);
-               discrordDBCheck(facultyNumber).then(result =>{
+               discrordDBCheck(facultyNumber).then(result =>{ 
                   if (result!=""){
-                    const data = {
-                      Id:null,
-                      StudentId: result[0].Id,
-                      DiscordId: discordID,
-                      GuildId :guildID
-                    };
-                    insertIntoDiscordData(data);
+                    checkStudentAuth(discordID,guildID).then(rcrdExist => {
+                      if (rcrdExist==""){
+                        const data = {
+                          Id:null,
+                          StudentId: result[0].Id,
+                          DiscordId: discordID,
+                          GuildId :guildID
+                        };
+                        insertIntoDiscordData(data);
+                      }
+                    })
+                    
 
                     if(degree === "Бакалавър"){
                       const role = bachelorRoles[courseNumber];
