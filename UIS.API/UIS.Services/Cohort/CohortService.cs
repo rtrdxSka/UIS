@@ -22,7 +22,7 @@ namespace UIS.Services.Cohort
             foreach (var moodleCohort in allMoodleCohorts)
             {
                 // vzima userIds
-                // itererame vseki user i vzimame info za nego i go mahame dolu polse vuv foreacha
+                // iterirame vseki user i vzimame info za nego i go mahame dolu polse vuv foreacha
                 // refactor da chekva za null
 
                 // Takes the student ids from the given moodle cohort
@@ -91,6 +91,13 @@ namespace UIS.Services.Cohort
         {
             foreach (var student in studentsToAddToCohort)
             {
+                bool userExists = await CheckIfUserExistsByUsernameAsync(client, student.Username, jwt);
+
+                if (userExists == false)
+                {
+                    await CreateMoodleUserAsync(client, student, jwt);
+                }
+
                 var content = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string, string>("wstoken", jwt),
@@ -165,6 +172,51 @@ namespace UIS.Services.Cohort
             else
             {
                 return null;
+            }
+        }
+
+        public async Task<bool> CheckIfUserExistsByUsernameAsync(HttpClient client, string username, string jwt)
+        {
+            var content = new FormUrlEncodedContent(new[]
+            {
+                    new KeyValuePair<string, string>("wstoken", jwt),
+                    new KeyValuePair<string, string>("wsfunction", "core_user_get_users_by_field"),
+                    new KeyValuePair<string, string>("moodlewsrestformat", "json"),
+                    new KeyValuePair<string, string>("field", "username"),
+                    new KeyValuePair<string, string>("values[0]", username)
+            });
+
+            var responseMessage = await client.PostAsync(MoodleAuthConstants.RestAPIUrl, content);
+            var response = await responseMessage.Content.ReadAsStringAsync();
+
+            // TODO: Find a better approach
+            if (response == "[]")
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task CreateMoodleUserAsync(HttpClient client, StudentInfoDTO studentInfo, string jwt)
+        {
+            var content = new FormUrlEncodedContent(new[]
+            {
+                    new KeyValuePair<string, string>("wstoken", jwt),
+                    new KeyValuePair<string, string>("wsfunction", "core_user_create_users"),
+                    new KeyValuePair<string, string>("moodlewsrestformat", "json"),
+                    new KeyValuePair<string, string>("users[0][username]", studentInfo.Username),
+                    new KeyValuePair<string, string>("users[0][password]", "St_" + studentInfo.Username),
+                    new KeyValuePair<string, string>("users[0][firstname]", studentInfo.FirstName),
+                    new KeyValuePair<string, string>("users[0][lastname]", studentInfo.LastName),
+                    new KeyValuePair<string, string>("users[0][email]", studentInfo.Email),
+            });
+
+            var response = await client.PostAsync(MoodleAuthConstants.RestAPIUrl, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception();
             }
         }
 
