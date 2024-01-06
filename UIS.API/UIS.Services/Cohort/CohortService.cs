@@ -91,6 +91,13 @@ namespace UIS.Services.Cohort
         {
             foreach (var student in studentsToAddToCohort)
             {
+                bool userExists = await CheckIfUserExistsByUsernameAsync(client, student.Username, jwt);
+
+                if (userExists == false)
+                {
+                    await CreateMoodleUserAsync(client, student, jwt);
+                }
+
                 var content = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string, string>("wstoken", jwt),
@@ -179,16 +186,16 @@ namespace UIS.Services.Cohort
                     new KeyValuePair<string, string>("values[0]", username)
             });
 
-            var response = await client.PostAsync(MoodleAuthConstants.RestAPIUrl, content);
+            var responseMessage = await client.PostAsync(MoodleAuthConstants.RestAPIUrl, content);
+            var response = await responseMessage.Content.ReadAsStringAsync();
 
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-            else
+            // TODO: Find a better approach
+            if (response == "[]")
             {
                 return false;
             }
+
+            return true;
         }
 
         public async Task CreateMoodleUserAsync(HttpClient client, StudentInfoDTO studentInfo, string jwt)
