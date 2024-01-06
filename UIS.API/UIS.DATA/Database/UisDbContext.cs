@@ -13,13 +13,16 @@ namespace UIS.DATA.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<StudentInfo>()
                 .HasMany(s => s.DiscordData)
                 .WithOne(e => e.StudentInfo)
                 .HasForeignKey(e => e.StudentId)
                 .IsRequired();
 
-
+            modelBuilder.Entity<StudentInfo>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
