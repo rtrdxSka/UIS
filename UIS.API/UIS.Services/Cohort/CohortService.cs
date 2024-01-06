@@ -22,7 +22,7 @@ namespace UIS.Services.Cohort
             foreach (var moodleCohort in allMoodleCohorts)
             {
                 // vzima userIds
-                // itererame vseki user i vzimame info za nego i go mahame dolu polse vuv foreacha
+                // iterirame vseki user i vzimame info za nego i go mahame dolu polse vuv foreacha
                 // refactor da chekva za null
 
                 // Takes the student ids from the given moodle cohort
@@ -165,6 +165,29 @@ namespace UIS.Services.Cohort
             else
             {
                 return null;
+            }
+        }
+
+        public async Task<bool> CheckIfUserExistsByUsername(HttpClient client, string username, string jwt)
+        {
+            var content = new FormUrlEncodedContent(new[]
+            {
+                    new KeyValuePair<string, string>("wstoken", jwt),
+                    new KeyValuePair<string, string>("wsfunction", "core_user_get_users_by_field"),
+                    new KeyValuePair<string, string>("moodlewsrestformat", "json"),
+                    new KeyValuePair<string, string>("field", "username"),
+                    new KeyValuePair<string, string>("values[0]", username)
+            });
+
+            var response = await client.PostAsync(MoodleAuthConstants.RestAPIUrl, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
