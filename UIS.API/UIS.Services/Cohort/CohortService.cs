@@ -233,7 +233,7 @@ namespace UIS.Services.Cohort
             }
         }
 
-        public async Task SaveOrUpdateStudentsInfoAsync(List<StudentInfoDTO> students)
+        public async Task SaveStudentsInfoAsync(List<StudentInfoDTO> students)
         {
             foreach (var student in students)
             {
@@ -241,13 +241,17 @@ namespace UIS.Services.Cohort
 
                 try
                 {
-                    _studentsRepository.Add(studentInfo);
+                    // Check if the student is already added
+                    var existingStudent = await _studentsRepository.GetStudentByUsernameAsync(student.Username);
 
-                    await _studentsRepository.SaveChangesAsync();
+                    if (existingStudent == null)
+                    {
+                        await _studentsRepository.AddAsync(studentInfo);
+                    }
                 }
-                catch (DbUpdateException ex)
+                catch (Exception ex)
                 {
-                    _studentsRepository.Update(studentInfo);
+                    // Handle the exception or log it
                 }
             }
 
