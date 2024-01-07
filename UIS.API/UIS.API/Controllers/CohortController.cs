@@ -63,6 +63,8 @@ namespace UIS.API.Controllers
 
                     await _cohortService.AddStudentToMoodleCohortAsync(client, "9d21c61ac5ffa93a2dc9a3e6102fc67a", updateData.data, updateData.cohortId);
 
+                    await _cohortService.SaveStudentsInfoAsync(updateData.data);
+
                     return Ok();
                 }
                 else

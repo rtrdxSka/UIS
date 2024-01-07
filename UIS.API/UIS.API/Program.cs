@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+
 using UIS.DATA.Database;
 using UIS.Services.Auth;
 using UIS.Services.Cohort;
@@ -17,9 +18,11 @@ builder.Services.AddTransient<IStudentsRepository, StudentsRepository>();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<UisDbContext>(options =>
         options.UseMySql(ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("uisStudent"))));
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Auto mapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // CORS
 builder.Services.AddCors(options => options.AddPolicy(name: "UIS",

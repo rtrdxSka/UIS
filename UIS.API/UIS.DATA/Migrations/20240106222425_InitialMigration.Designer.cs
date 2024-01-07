@@ -10,8 +10,8 @@ using UIS.DATA.Database;
 namespace UIS.DATA.Migrations
 {
     [DbContext(typeof(UisDbContext))]
-    [Migration("20231217174535_InitialCreateDB")]
-    partial class InitialCreateDB
+    [Migration("20240106222425_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -83,9 +83,12 @@ namespace UIS.DATA.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("Students");
                 });

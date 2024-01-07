@@ -7,10 +7,23 @@ using UIS.DAL.Constants;
 using UIS.DAL.DTO;
 using Microsoft.AspNetCore.Http;
 
+using AutoMapper;
+using UIS.DATA;
+using Microsoft.EntityFrameworkCore;
+
 namespace UIS.Services.Cohort
 {
     public class CohortService : ICohortService
     {
+        private readonly IStudentsRepository _studentsRepository;
+        private readonly IMapper _mapper;
+
+        public CohortService(IStudentsRepository studentsRepository, IMapper mapper)
+        {
+            _studentsRepository = studentsRepository;
+            _mapper = mapper;
+        }
+
         public async Task<List<CohortUpdateDataDTO>> ExtractMoodleSyncDataAsync(HttpClient client, string jwt, IFormFile csvFile)
         {
             var allMoodleCohorts = await GetMoodleCohortsAsync(client, jwt);
@@ -218,6 +231,31 @@ namespace UIS.Services.Cohort
             {
                 throw new Exception();
             }
+        }
+
+        public async Task SaveStudentsInfoAsync(List<StudentInfoDTO> students)
+        {
+            foreach (var student in students)
+            {
+                StudentInfo studentInfo = _mapper.Map<StudentInfo>(student);
+
+                try
+                {
+                    // Check if the student is already added
+                    var existingStudent = await _studentsRepository.GetStudentByUsernameAsync(student.Username);
+
+                    if (existingStudent == null)
+                    {
+                        await _studentsRepository.AddAsync(studentInfo);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle the exception or log it
+                }
+            }
+
+            await _studentsRepository.SaveChangesAsync();
         }
 
         private async Task<CohortUpdateDataDTO> GetMoodleUpdateDataAsync(HttpClient client, string jwt, List<int> studentsIdsFromMoodle, List<StudentInfoDTO> studentsFromCsv, string cohortName)
