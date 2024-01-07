@@ -30,6 +30,8 @@ export class MoodleSyncComponent {
     this.createForm();
   }
 
+  public cohortsStatusSnackbar: string = "Няма промени!";
+
   public csvForm!: FormGroup;
   public selectedCohort!: DataToUpdateCohort;
   public cohortsUpdateData!: DataToUpdateCohort[];
@@ -43,7 +45,8 @@ export class MoodleSyncComponent {
     this.requestsMoodleService.getUpdatedCohortInfo(formData).subscribe((data) => {
       this.cohortsUpdateData = data;
       this.selectedCohort = this.cohortsUpdateData[0];
-      console.log(this.cohortsUpdateData);
+
+      this.cohortsStatusSnackbar = "Няма промени!";
     })
   }
 
@@ -52,12 +55,23 @@ export class MoodleSyncComponent {
   }
 
   public revertChanges() {
-    this.cohortsUpdateData = [];
+    this.cohortsStatusSnackbar = "Промените са върнати успешно!";
+
+    this.clearData();
   }
 
   public updateCohorts() {
     this.removeStudentsFromCohort();
     this.addStudentsToCohort();
+
+    // Push the clear data on the async queue so that the previous requests are executed before clearing the data
+    setTimeout(() => {
+      this.clearData();
+    }, 0);
+  }
+
+  private clearData() {
+    this.cohortsUpdateData = [];
   }
 
   private removeStudentsFromCohort(): void {
@@ -74,6 +88,10 @@ export class MoodleSyncComponent {
       this.requestsMoodleService.removeStudentsFromCohort(removeStudentsBody).subscribe(() => {
         console.log('successful');
         // TODO: Add snackbar
+        this.cohortsStatusSnackbar = "Данните са актуализирани успешно!";
+      }, err => {
+        this.clearData();
+        this.cohortsStatusSnackbar = "Възникна проблем при актуализирането на данните!";
       });
     }
   }
@@ -92,6 +110,10 @@ export class MoodleSyncComponent {
       this.requestsMoodleService.addStudentsToCohort(addStudentsBody).subscribe(() => {
         console.log('successful');
         // TODO: Add snackbar
+        this.cohortsStatusSnackbar = "Данните са актуализирани успешно!";
+      }, err => {
+        this.clearData();
+        this.cohortsStatusSnackbar = "Възникна проблем при актуализирането на данните!";
       });
     }
   }

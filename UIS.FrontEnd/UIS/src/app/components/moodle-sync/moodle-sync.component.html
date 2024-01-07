@@ -53,7 +53,7 @@
             <a class="btn-update" (click)="updateCohorts()">Одобри</a>
         </div>
     } @else {
-        <div class="no-change">Няма промени!</div>
+        <div class="no-change">{{ cohortsStatusSnackbar }}</div>
     }
 }
 
