@@ -12,6 +12,7 @@ namespace UIS.Services.Cohort
         Task DeleteStudentsFromMoodleCohortAsync(HttpClient client, string jwt, List<StudentInfoDTO> studentsRemovedFromCohort, string cohortId);
         Task<bool> CheckIfUserExistsByUsernameAsync(HttpClient client, string username, string jwt);
         Task CreateMoodleUserAsync(HttpClient client, StudentInfoDTO studentInfo, string jwt);
+        Task SaveOrUpdateStudentsInfoAsync(List<StudentInfoDTO> students);
         List<StudentInfoDTO> ExtractStudentDataFromCSV(IFormFile csvFile);
         Task<StudentInfoDTO?> GetUserByIdAsync(HttpClient client, int userId, string jwt);
     }

@@ -25,6 +25,11 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
         DbSet.Remove(entity);
     }
 
+    public void Update(TEntity entity)
+    {
+        DbSet.Update(entity);
+    }
+
     public IEnumerable<TEntity> GetAll()
     {
         return DbSet.ToList();
