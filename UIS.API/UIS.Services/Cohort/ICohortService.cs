@@ -5,7 +5,7 @@ namespace UIS.Services.Cohort
 {
     public interface ICohortService
     {
-        Task<List<CohortUpdateDataDTO>> ExtractMoodleSyncDataAsync(HttpClient client, string jwt, IFormFile csvFile);
+        Task<List<CohortUpdateDataDTO>?> ExtractMoodleSyncDataAsync(HttpClient client, string jwt, IFormFile csvFile);
         Task<List<MoodleCohortsDTO>> GetMoodleCohortsAsync(HttpClient client, string jwt);
         Task<List<MoodleCohortUsersDTO>> GetStudentsIDsFromMoodleCohortsAsync(HttpClient client, int cohortId, string jwt);
         Task AddStudentToMoodleCohortAsync(HttpClient client, string jwt, List<StudentInfoDTO> studentsToAddToCohort, string cohortId);

@@ -26,7 +26,6 @@ input[type="file"]::file-selector-button:hover {
 input[type="file"]::file-selector-button:active {
     background-color: #e5e7eb;
 }
-  
 
 .form-group > form {
     display: flex;
@@ -51,8 +50,14 @@ input[type="file"]::file-selector-button:active {
 }
 
 .form-group > form > span {
-    font-size: 14px;
-    color: green
+    font-size: 18px;
+    color: rgb(189, 14, 5);
+}
+
+.no-change {
+    font-size: 22px;
+    color: green;
+    margin-top: 8px;
 }
 
 /* User table */

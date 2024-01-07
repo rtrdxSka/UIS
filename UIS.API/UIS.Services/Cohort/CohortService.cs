@@ -42,9 +42,13 @@ namespace UIS.Services.Cohort
                 var studentsIdsFromMoodle = studentIdsFromMoodle[0].userids ?? throw new Exception();
 
                 var moodleUpdateData = await GetMoodleUpdateDataAsync(client, jwt, studentsIdsFromMoodle, studentsFromCsv, moodleCohort.name);
-                moodleUpdateData.CohortId = moodleCohort.id;
 
-                cohortsUpdateData.Add(moodleUpdateData);
+                if (moodleUpdateData is not null)
+                {
+                    moodleUpdateData.CohortId = moodleCohort.id;
+
+                    cohortsUpdateData.Add(moodleUpdateData);
+                }
             }
 
             return cohortsUpdateData;
@@ -259,6 +263,11 @@ namespace UIS.Services.Cohort
             {
                 var student = await GetUserByIdAsync(client, studentId, jwt);
                 allStudentsAfterRemove.Add(student);
+            }
+
+            if (studentsToRemoveFromCohort.Count == 0 && studentsFromCsv.Count == 0)
+            {
+                return null;
             }
 
             CohortUpdateDataDTO dataToUpdateMoodleDTO = new CohortUpdateDataDTO();
