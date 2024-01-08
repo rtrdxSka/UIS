@@ -48,8 +48,12 @@ client.on('interactionCreate', async (interaction) => {
 
     const adminRole = interaction.guild.roles.cache.find(role => role.name == "Administrator");
     if (interaction.member.roles.cache.has(adminRole.id)){
-       await syncUsers(interaction,client,bachelorRoles,masterRoles);
-       await interaction.editReply("Успешна синхронизация!");
+       const result = await syncUsers(interaction,client,bachelorRoles,masterRoles);
+       if(result == "Success"){
+        await interaction.editReply("Успешна синхронизация!");
+       }
+  
+       
     }
     else {
       await interaction.editReply("/sync: Нямате права за тази команда!");
