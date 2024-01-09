@@ -28,7 +28,7 @@ namespace UIS.API.Controllers
 
             using (var client = new HttpClient())
             {
-                var cohortsUpdateData = await _cohortService.ExtractMoodleSyncDataAsync(client, "9d21c61ac5ffa93a2dc9a3e6102fc67a", csvFile);
+                var cohortsUpdateData = await _cohortService.ExtractMoodleSyncDataAsync(client, "f29fd12b78f34cc04ed0a071a3a1149d", csvFile);
 
                 return Ok(cohortsUpdateData);
             }
@@ -41,7 +41,7 @@ namespace UIS.API.Controllers
             {
                 if(updateData.data != null)
                 {
-                    await _cohortService.DeleteStudentsFromMoodleCohortAsync(client, "9d21c61ac5ffa93a2dc9a3e6102fc67a", updateData.data, updateData.cohortId);
+                    await _cohortService.DeleteStudentsFromMoodleCohortAsync(client, "f29fd12b78f34cc04ed0a071a3a1149d", updateData.data, updateData.cohortId);
 
                     return Ok();
                 }
@@ -61,7 +61,7 @@ namespace UIS.API.Controllers
                 {
                     // Creates user account if it does not find a moodle user with the provided username
 
-                    await _cohortService.AddStudentToMoodleCohortAsync(client, "9d21c61ac5ffa93a2dc9a3e6102fc67a", updateData.data, updateData.cohortId);
+                    await _cohortService.AddStudentToMoodleCohortAsync(client, "f29fd12b78f34cc04ed0a071a3a1149d", updateData.data, updateData.cohortId);
 
                     await _cohortService.SaveStudentsInfoAsync(updateData.data);
 

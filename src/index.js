@@ -5,7 +5,7 @@ const { Routes } = require('discord-api-types/v10');
 const {insertIntoDiscordData,checkStudentAuth,discrordDBCheck,facultyDB,executeQuery} = require('./database.js');
 const express = require("express");
 const app = express();
-const PORT = 4200;
+const PORT = 4400;
 const {getGuildById,checkAuth,getUser,getCourseRole,setRole,setName,removeRoles,removeBachelorRoles,syncUsers} = require('./userfunctions.js');
 const {decryptFromURLSafe,registerCommands,encryptToURLSafe,bachelorRoles,masterRoles} = require('./utilites.js');
 require('dotenv').config();

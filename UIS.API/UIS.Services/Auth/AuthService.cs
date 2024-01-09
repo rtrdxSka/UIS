@@ -63,7 +63,7 @@ namespace UIS.Services.Auth
         {
             // Refactor to get real data by making a request to the UIS API
             List<UISStudentInfoDTO> records = new List<UISStudentInfoDTO>();
-            string mockedCSV = @"C:\Users\Mitaka\Desktop\uis.csv";
+            string mockedCSV = @"C:\Users\aleks\Desktop\uis.csv";
 
             // Ensure that the file is read with UTF-8 encoding
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)

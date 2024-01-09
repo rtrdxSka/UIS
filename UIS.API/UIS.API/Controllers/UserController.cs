@@ -98,7 +98,7 @@ namespace UIS.API.Controllers
                                                 <td>471221041</td>
                                                 <td>78</td>
                                                 <td>КРИСТИЯН МИХАЙЛОВ МИТЕВ</td>
-                                                <td>ПМИ</td>
+                                                <td>ИСН</td>
                                                 <td>$12Действащ</td>
                                             </tr>
                                             </tbody></table>
@@ -172,7 +172,7 @@ namespace UIS.API.Controllers
                                 new KeyValuePair<string, string>("faculty_number", userInfo.username)
                             });
 
-                            await client.PostAsync("http://localhost:4200/api/User/discord-info", content);
+                            await client.PostAsync("http://localhost:4400/api/User/discord-info", content);
                             return Redirect("https://www.google.com/");
                         }
                     }
